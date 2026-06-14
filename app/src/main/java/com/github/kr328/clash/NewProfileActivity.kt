@@ -3,6 +3,7 @@ package com.github.kr328.clash
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
@@ -142,7 +143,7 @@ class NewProfileActivity : BaseActivity<NewProfileDesign>() {
         return withContext(Dispatchers.IO) {
             val providers = packageManager.queryIntentActivities(
                 Intent(Intents.ACTION_PROVIDE_URL),
-                0
+                PackageManager.ResolveInfoFlags.of(0)
             ).map {
                 val activity = it.activityInfo
 

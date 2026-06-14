@@ -55,8 +55,8 @@ subprojects {
                 else "com.github.kr328.clash.$name"
             }
 
-            minSdk = 21
-            targetSdk = 35
+            minSdk = 36
+            targetSdk = 36
 
             versionName = "2.11.30"
             versionCode = 211030
@@ -81,7 +81,7 @@ subprojects {
             }
         }
 
-        ndkVersion = "29.0.14206865"
+        ndkVersion = "30.0.14904198"
 
         compileSdkVersion(defaultConfig.targetSdk!!)
 

@@ -8,6 +8,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.ViewCompat
 import com.github.kr328.clash.common.compat.isAllowForceDarkCompat
 import com.github.kr328.clash.common.compat.isLightNavigationBarCompat
 import com.github.kr328.clash.common.compat.isLightStatusBarsCompat
@@ -50,6 +51,20 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
                 setContentView(View(this))
             }
         }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // Re-apply appearance flags now that the decor view is attached to the window
+        // (insetsController is guaranteed to be available) and re-dispatch insets so that
+        // our surface padding listeners (set before setContentView) see up-to-date values.
+        if (Build.VERSION.SDK_INT >= 23) {
+            window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
+        }
+        if (Build.VERSION.SDK_INT >= 27) {
+            window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
+        }
+        ViewCompat.requestApplyInsets(window.decorView)
+    }
 
     private var defer: suspend () -> Unit = {}
     private var deferRunning = false
@@ -94,6 +109,15 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         checkNotNull(getSystemService<ActivityManager>()).appTasks.forEach { task ->
             task.setExcludeFromRecents(uiStore.hideFromRecents)
         }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : androidx.activity.OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    onBackInvoked()
+                }
+            }
+        )
 
         launch {
             main()
@@ -150,8 +174,12 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        this.onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    open fun onBackInvoked() {
+        finish()
     }
 
     override fun onProfileChanged() {
