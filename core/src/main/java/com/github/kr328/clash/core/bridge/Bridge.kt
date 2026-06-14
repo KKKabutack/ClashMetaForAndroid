@@ -1,5 +1,6 @@
 package com.github.kr328.clash.core.bridge
 
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.annotation.Keep
@@ -68,7 +69,7 @@ object Bridge {
             .detachFd()
 
         val home = ctx.filesDir.resolve("clash").apply { mkdirs() }.absolutePath
-        val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
+        val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.PackageInfoFlags.of(0)).versionName ?: "unknown"
         val sdkVersion = Build.VERSION.SDK_INT
 
         Log.d("Home = $home")

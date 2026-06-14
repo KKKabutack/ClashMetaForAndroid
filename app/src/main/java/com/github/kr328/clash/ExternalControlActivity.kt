@@ -25,8 +25,7 @@ import com.github.kr328.clash.design.R
 class ExternalControlActivity : Activity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        @Suppress("DEPRECATION")
-        overridePendingTransition(0, 0)
+        overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0)
 
         when(intent.action) {
             Intent.ACTION_VIEW -> {
@@ -100,7 +99,6 @@ class ExternalControlActivity : Activity(), CoroutineScope by MainScope() {
 
     override fun finish() {
         super.finish()
-        @Suppress("DEPRECATION")
-        overridePendingTransition(0, 0)
+        overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
     }
 }

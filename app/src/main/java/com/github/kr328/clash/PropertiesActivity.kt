@@ -69,7 +69,7 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackInvoked() {
         design?.apply {
             launch {
                 if (!progressing) {
@@ -77,7 +77,7 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
                         finish()
                 }
             }
-        } ?: return super.onBackPressed()
+        } ?: super.onBackInvoked()
     }
 
     private suspend fun PropertiesDesign.verifyAndCommit() {
