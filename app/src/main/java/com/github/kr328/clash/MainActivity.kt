@@ -17,6 +17,7 @@ import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.design.MainDesign
 import com.github.kr328.clash.design.ui.ToastDuration
+import com.github.kr328.clash.remote.LiveNotificationController
 import com.github.kr328.clash.util.startClashService
 import com.github.kr328.clash.util.stopClashService
 import com.github.kr328.clash.util.withClash
@@ -154,12 +155,17 @@ class MainActivity : BaseActivity<MainDesign>() {
             val requestPermissionLauncher =
                 registerForActivityResult(RequestPermission()
                 ) { isGranted: Boolean ->
+                    if (isGranted) {
+                        LiveNotificationController.refresh()
+                    }
                 }
             if (ContextCompat.checkSelfPermission(
                     this,
                     android.Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                LiveNotificationController.refresh()
             }
         }
         setupShortcuts()

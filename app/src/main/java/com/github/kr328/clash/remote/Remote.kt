@@ -31,6 +31,8 @@ object Remote {
     fun launch() {
         ApplicationObserver.attach(Global.application)
 
+        LiveNotificationController.init(Global.application)
+
         ApplicationObserver.onVisibleChanged {
             if(it) {
                 Log.d("App becomes visible")
