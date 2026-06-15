@@ -14,14 +14,19 @@ import com.github.kr328.clash.common.constants.Components
 import com.github.kr328.clash.common.constants.Intents
 
 /**
- * Builds and posts the VPN "Live Update" notification introduced in Android 16 (API 36).
+ * Builds and posts the VPN status notification.
  *
- * The same notification id is reused across three states so they replace each other:
- *  - [buildConnecting] / [buildConnected]: promoted ongoing live updates owned by the
- *    foreground service while the tunnel is up (shows node + live speed + a Disconnect action).
- *  - [buildDisconnected]: a lightweight control card posted by the app so the user can turn
- *    the VPN on directly from the shade. It is intentionally NOT a promoted live update because
- *    nothing is "in progress" while disconnected.
+ * On Android 16 QPR1 (36.1)+ this becomes a promoted ongoing "Live Update" (with a status bar
+ * chip). On base Android 16 (36.0) the promotion request is a graceful no-op and the exact same
+ * notification is shown as a regular ongoing foreground notification. [NotificationCompat] handles
+ * this version gating for us, so no manual SDK checks are required.
+ *
+ * The single notification id is reused across three states so they replace each other:
+ *  - [buildConnecting] / [buildConnected]: owned by the foreground service while the tunnel is up
+ *    (node + live speed + a Disconnect action).
+ *  - [buildDisconnected]: a lightweight control card posted by the app so the user can turn the
+ *    VPN on directly from the shade. It is intentionally not promoted because nothing is in
+ *    progress while disconnected.
  */
 object LiveNotification {
     const val CHANNEL_ID = "clash_status_channel"

@@ -16,6 +16,7 @@ import com.github.kr328.clash.service.StatusProvider
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.selects.select
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
@@ -137,7 +138,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
             }
 
             val trimmed = number.toFloatOrNull()?.let { f ->
-                if (f >= 10f) f.toInt().toString() else String.format("%.1f", f)
+                if (f >= 10f) f.toInt().toString() else String.format(Locale.US, "%.1f", f)
             } ?: number
 
             return "$trimmed$unit"
