@@ -7,7 +7,11 @@ import com.github.kr328.clash.design.ui.Insets
 
 fun View.setOnInsertsChangedListener(adaptLandscape: Boolean = true, listener: (Insets) -> Unit) {
     ViewCompat.setOnApplyWindowInsetsListener(this) { v, insetsCompat ->
-        val insets = insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars())
+        // System bars + display cutout so content stays clear of the notch/punch-hole in every
+        // orientation (in landscape the cutout sits on the side where system bar insets are 0).
+        val insets = insetsCompat.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
 
         val rInsets = if (ViewCompat.getLayoutDirection(v) == ViewCompat.LAYOUT_DIRECTION_LTR) {
             Insets(

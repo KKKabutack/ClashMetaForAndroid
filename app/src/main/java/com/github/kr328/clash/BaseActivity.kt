@@ -2,7 +2,6 @@ package com.github.kr328.clash
 
 import android.app.ActivityManager
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
@@ -19,7 +18,6 @@ import com.github.kr328.clash.design.model.DarkMode
 import com.github.kr328.clash.design.store.UiStore
 import com.github.kr328.clash.design.ui.DayNight
 import com.github.kr328.clash.design.util.resolveThemedBoolean
-import com.github.kr328.clash.design.util.resolveThemedColor
 import com.github.kr328.clash.design.util.showExceptionToast
 import com.github.kr328.clash.remote.Broadcasts
 import com.github.kr328.clash.remote.Remote
@@ -57,12 +55,8 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         // Re-apply appearance flags now that the decor view is attached to the window
         // (insetsController is guaranteed to be available) and re-dispatch insets so that
         // our surface padding listeners (set before setContentView) see up-to-date values.
-        if (Build.VERSION.SDK_INT >= 23) {
-            window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
-        }
-        if (Build.VERSION.SDK_INT >= 27) {
-            window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
-        }
+        window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
+        window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
         ViewCompat.requestApplyInsets(window.decorView)
     }
 
@@ -233,17 +227,12 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
 
         window.isAllowForceDarkCompat = false
         window.isSystemBarsTranslucentCompat = true
-        
-        window.statusBarColor = resolveThemedColor(android.R.attr.statusBarColor)
-        window.navigationBarColor = resolveThemedColor(android.R.attr.navigationBarColor)
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
-        }
-
-        if (Build.VERSION.SDK_INT >= 27) {
-            window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
-        }
+        // Note: window.statusBarColor / navigationBarColor are intentionally not set here. They are
+        // deprecated and no-ops on API 35+; the (transparent) system bar colors come from the theme,
+        // and bar icon legibility is driven by the light-appearance controllers below.
+        window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
+        window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
 
         this.dayNight = dayNight
     }
