@@ -1,13 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_clash_light">#1e4376</color>
-    <color name="color_clash_dark">#1976d2</color>
+    <color name="color_clash_light">#1B4F8A</color>
+    <color name="color_clash_dark">#8AB4F8</color>
     <color name="color_system_ui_overlay">#50000000</color>
-    <color name="color_light_background">#FFFAFAFA</color>
-    <color name="color_dark_background">#FF121212</color>
-    <color name="color_dark_surface">#FF202020</color>
-    <color name="color_light_clash_stopped">#FF808080</color>
+
+    <color name="color_light_background">#FFF7F9FC</color>
+    <color name="color_dark_background">#FF0F1419</color>
+    <color name="color_dark_surface">#FF1A222C</color>
+    <color name="color_light_clash_stopped">#FF6B7280</color>
     <color name="color_light_control_disabled">#FFD3D3D3</color>
     <color name="color_dark_control_disabled">#FF808080</color>
-    <color name="color_error">#FFB00020</color>
+    <color name="color_error">#FFB3261E</color>
+
+    <!-- M3 tonal surfaces (light) -->
+    <color name="color_surface_light">#FFFFFFFF</color>
+    <color name="color_on_surface_light">#FF1A1C1E</color>
+    <color name="color_surface_container_low_light">#FFF1F4F9</color>
+    <color name="color_surface_container_light">#FFE9EEF5</color>
+    <color name="color_surface_container_high_light">#FFE1E7F0</color>
+    <color name="color_surface_container_highest_light">#FFD9E0EB</color>
+    <color name="color_primary_container_light">#FFD3E4FF</color>
+    <color name="color_on_primary_container_light">#FF001C38</color>
+    <color name="color_secondary_light">#FF515F73</color>
+    <color name="color_secondary_container_light">#FFD5E3F8</color>
+    <color name="color_on_secondary_container_light">#FF0D1C2E</color>
+    <color name="color_tertiary_light">#FF67587A</color>
+
+    <!-- M3 tonal surfaces (dark) -->
+    <color name="color_on_surface_dark">#FFE2E2E6</color>
+    <color name="color_surface_container_low_dark">#FF151C24</color>
+    <color name="color_surface_container_dark">#FF1E2732</color>
+    <color name="color_surface_container_high_dark">#FF28313D</color>
+    <color name="color_surface_container_highest_dark">#FF333C49</color>
+    <color name="color_primary_container_dark">#FF0B3A6B</color>
+    <color name="color_on_primary_container_dark">#FFD3E4FF</color>
+    <color name="color_secondary_dark">#FFB9C7DC</color>
+    <color name="color_on_secondary_dark">#FF233044</color>
+    <color name="color_secondary_container_dark">#FF3A475A</color>
+    <color name="color_on_secondary_container_dark">#FFD5E3F8</color>
+    <color name="color_tertiary_dark">#FFD1BFE7</color>
+    <color name="color_on_tertiary_dark">#FF382C4A</color>
+
+    <color name="color_connect_running">#FF1B7A4E</color>
+    <color name="color_connect_stopped">#FF6B7280</color>
 </resources>
