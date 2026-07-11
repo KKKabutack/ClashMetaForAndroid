@@ -52,6 +52,7 @@
     <!-- Main shell -->
     <dimen name="floating_nav_margin">16dp</dimen>
     <dimen name="floating_nav_height">72dp</dimen>
+    <dimen name="floating_nav_fab_gap">16dp</dimen>
     <dimen name="connect_button_size">128dp</dimen>
     <dimen name="main_card_corner">24dp</dimen>
     <dimen name="main_section_gap">12dp</dimen>

@@ -4,11 +4,13 @@ import android.content.Context
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.core.model.*
+import com.github.kr328.clash.service.data.ImportedDao
 import com.github.kr328.clash.service.data.Selection
 import com.github.kr328.clash.service.data.SelectionDao
 import com.github.kr328.clash.service.remote.IClashManager
 import com.github.kr328.clash.service.remote.ILogObserver
 import com.github.kr328.clash.service.store.ServiceStore
+import com.github.kr328.clash.service.util.importedDir
 import com.github.kr328.clash.service.util.sendOverrideChanged
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -56,6 +58,26 @@ class ClashManager(private val context: Context) : IClashManager,
                 SelectionDao().removeSelected(current, group)
             }
         }
+    }
+
+    /** Loads the selected profile without starting the VPN service.
+     *
+     * This makes proxy-group and region selection available before connecting;
+     * selector changes are still persisted and reused by ConfigurationModule
+     * when the VPN starts.
+     */
+    override suspend fun loadActiveProfile() {
+        val current = store.activeProfile ?: throw IllegalStateException("No profile selected")
+        val profile = ImportedDao().queryByUUID(current)
+            ?: throw IllegalStateException("No imported profile selected")
+
+        Clash.setAgeSecretKey(profile.ageSecretKey?.takeIf { it.isNotBlank() })
+        Clash.load(context.importedDir.resolve(profile.uuid.toString())).await()
+
+        val invalidSelections = SelectionDao().querySelections(profile.uuid)
+            .filterNot { Clash.patchSelector(it.proxy, it.selected) }
+            .map { it.proxy }
+        SelectionDao().removeSelections(profile.uuid, invalidSelections)
     }
 
     override fun patchOverride(slot: Clash.OverrideSlot, configuration: ConfigurationOverride) {
