@@ -1,64 +1,93 @@
 package com.github.kr328.clash.design.compose
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.annotation.AttrRes
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
 import com.github.kr328.clash.design.R
+import com.github.kr328.clash.design.util.resolveThemedBoolean
+import com.github.kr328.clash.design.util.resolveThemedColor
 
 /**
- * Compose counterpart of the app's Material 3 Expressive XML palette.
+ * Compose counterpart of the XML Amber Gold Material 3 scheme.
  *
- * The color roles deliberately reference the existing resource tokens so the
- * Compose migration keeps the product's established light and dark branding.
+ * Values come from the activity's resolved theme, so Force Light and Force Dark
+ * preferences produce the same scheme in Compose and View-based screens.
  */
 @Composable
 fun ClashTheme(content: @Composable () -> Unit) {
-    val darkTheme = isSystemInDarkTheme()
-    val scheme = if (darkTheme) {
+    val context = LocalContext.current
+    fun color(@AttrRes attr: Int) = Color(context.resolveThemedColor(attr))
+
+    val scheme = if (context.resolveThemedBoolean(R.attr.isDarkTheme)) {
         darkColorScheme(
-            primary = colorResource(R.color.color_clash_dark),
-            onPrimary = Color.White,
-            primaryContainer = colorResource(R.color.color_primary_container_dark),
-            onPrimaryContainer = colorResource(R.color.color_on_primary_container_dark),
-            secondary = colorResource(R.color.color_secondary_dark),
-            onSecondary = colorResource(R.color.color_on_secondary_dark),
-            secondaryContainer = colorResource(R.color.color_secondary_container_dark),
-            onSecondaryContainer = colorResource(R.color.color_on_secondary_container_dark),
-            tertiary = colorResource(R.color.color_tertiary_dark),
-            onTertiary = colorResource(R.color.color_on_tertiary_dark),
-            background = colorResource(R.color.color_dark_background),
-            onBackground = colorResource(R.color.color_on_surface_dark),
-            surface = colorResource(R.color.color_dark_surface),
-            onSurface = colorResource(R.color.color_on_surface_dark),
-            surfaceVariant = colorResource(R.color.color_surface_container_high_dark),
-            onSurfaceVariant = colorResource(R.color.color_on_surface_dark),
-            error = colorResource(R.color.color_error),
+            primary = color(androidx.appcompat.R.attr.colorPrimary),
+            onPrimary = color(com.google.android.material.R.attr.colorOnPrimary),
+            primaryContainer = color(com.google.android.material.R.attr.colorPrimaryContainer),
+            onPrimaryContainer = color(com.google.android.material.R.attr.colorOnPrimaryContainer),
+            secondary = color(com.google.android.material.R.attr.colorSecondary),
+            onSecondary = color(com.google.android.material.R.attr.colorOnSecondary),
+            secondaryContainer = color(com.google.android.material.R.attr.colorSecondaryContainer),
+            onSecondaryContainer = color(com.google.android.material.R.attr.colorOnSecondaryContainer),
+            tertiary = color(com.google.android.material.R.attr.colorTertiary),
+            onTertiary = color(com.google.android.material.R.attr.colorOnTertiary),
+            tertiaryContainer = color(com.google.android.material.R.attr.colorTertiaryContainer),
+            onTertiaryContainer = color(com.google.android.material.R.attr.colorOnTertiaryContainer),
+            background = color(android.R.attr.colorBackground),
+            onBackground = color(com.google.android.material.R.attr.colorOnBackground),
+            surface = color(com.google.android.material.R.attr.colorSurface),
+            onSurface = color(com.google.android.material.R.attr.colorOnSurface),
+            surfaceVariant = color(com.google.android.material.R.attr.colorSurfaceVariant),
+            onSurfaceVariant = color(com.google.android.material.R.attr.colorOnSurfaceVariant),
+            surfaceContainerLowest = color(com.google.android.material.R.attr.colorSurfaceContainerLowest),
+            surfaceContainerLow = color(com.google.android.material.R.attr.colorSurfaceContainerLow),
+            surfaceContainer = color(com.google.android.material.R.attr.colorSurfaceContainer),
+            surfaceContainerHigh = color(com.google.android.material.R.attr.colorSurfaceContainerHigh),
+            surfaceContainerHighest = color(com.google.android.material.R.attr.colorSurfaceContainerHighest),
+            outline = color(com.google.android.material.R.attr.colorOutline),
+            outlineVariant = color(com.google.android.material.R.attr.colorOutlineVariant),
+            error = color(android.R.attr.colorError),
+            onError = color(com.google.android.material.R.attr.colorOnError),
+            errorContainer = color(com.google.android.material.R.attr.colorErrorContainer),
+            onErrorContainer = color(com.google.android.material.R.attr.colorOnErrorContainer),
         )
     } else {
         lightColorScheme(
-            primary = colorResource(R.color.color_clash_light),
-            onPrimary = Color.White,
-            primaryContainer = colorResource(R.color.color_primary_container_light),
-            onPrimaryContainer = colorResource(R.color.color_on_primary_container_light),
-            secondary = colorResource(R.color.color_secondary_light),
-            onSecondary = Color.White,
-            secondaryContainer = colorResource(R.color.color_secondary_container_light),
-            onSecondaryContainer = colorResource(R.color.color_on_secondary_container_light),
-            tertiary = colorResource(R.color.color_tertiary_light),
-            background = colorResource(R.color.color_light_background),
-            onBackground = colorResource(R.color.color_on_surface_light),
-            surface = colorResource(R.color.color_surface_light),
-            onSurface = colorResource(R.color.color_on_surface_light),
-            surfaceVariant = colorResource(R.color.color_surface_container_high_light),
-            onSurfaceVariant = colorResource(R.color.color_on_surface_light),
-            error = colorResource(R.color.color_error),
+            primary = color(androidx.appcompat.R.attr.colorPrimary),
+            onPrimary = color(com.google.android.material.R.attr.colorOnPrimary),
+            primaryContainer = color(com.google.android.material.R.attr.colorPrimaryContainer),
+            onPrimaryContainer = color(com.google.android.material.R.attr.colorOnPrimaryContainer),
+            secondary = color(com.google.android.material.R.attr.colorSecondary),
+            onSecondary = color(com.google.android.material.R.attr.colorOnSecondary),
+            secondaryContainer = color(com.google.android.material.R.attr.colorSecondaryContainer),
+            onSecondaryContainer = color(com.google.android.material.R.attr.colorOnSecondaryContainer),
+            tertiary = color(com.google.android.material.R.attr.colorTertiary),
+            onTertiary = color(com.google.android.material.R.attr.colorOnTertiary),
+            tertiaryContainer = color(com.google.android.material.R.attr.colorTertiaryContainer),
+            onTertiaryContainer = color(com.google.android.material.R.attr.colorOnTertiaryContainer),
+            background = color(android.R.attr.colorBackground),
+            onBackground = color(com.google.android.material.R.attr.colorOnBackground),
+            surface = color(com.google.android.material.R.attr.colorSurface),
+            onSurface = color(com.google.android.material.R.attr.colorOnSurface),
+            surfaceVariant = color(com.google.android.material.R.attr.colorSurfaceVariant),
+            onSurfaceVariant = color(com.google.android.material.R.attr.colorOnSurfaceVariant),
+            surfaceContainerLowest = color(com.google.android.material.R.attr.colorSurfaceContainerLowest),
+            surfaceContainerLow = color(com.google.android.material.R.attr.colorSurfaceContainerLow),
+            surfaceContainer = color(com.google.android.material.R.attr.colorSurfaceContainer),
+            surfaceContainerHigh = color(com.google.android.material.R.attr.colorSurfaceContainerHigh),
+            surfaceContainerHighest = color(com.google.android.material.R.attr.colorSurfaceContainerHighest),
+            outline = color(com.google.android.material.R.attr.colorOutline),
+            outlineVariant = color(com.google.android.material.R.attr.colorOutlineVariant),
+            error = color(android.R.attr.colorError),
+            onError = color(com.google.android.material.R.attr.colorOnError),
+            errorContainer = color(com.google.android.material.R.attr.colorErrorContainer),
+            onErrorContainer = color(com.google.android.material.R.attr.colorOnErrorContainer),
         )
     }
 

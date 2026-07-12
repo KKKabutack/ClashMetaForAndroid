@@ -5,6 +5,7 @@
     <attr name="colorClashStopped" format="color" />
     <attr name="colorControlDisabled" format="color" />
     <attr name="colorLogo" format="color" />
+    <attr name="isDarkTheme" format="boolean" />
 
     <attr name="enabled" format="boolean" />
     <attr name="text" format="string" />
