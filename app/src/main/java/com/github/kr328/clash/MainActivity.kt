@@ -20,6 +20,8 @@ import com.github.kr328.clash.common.util.setUUID
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.core.bridge.Bridge
+import com.github.kr328.clash.core.model.ProxySort
+import com.github.kr328.clash.core.util.ProxySelection
 import com.github.kr328.clash.core.util.trafficTotal
 import com.github.kr328.clash.design.Design
 import com.github.kr328.clash.design.R as DesignR
@@ -158,6 +160,7 @@ class MainActivity : BaseActivity<Design<*>>() {
         val state = withClash { queryTunnelState() }
         val providers = withClash { queryProviders() }
         val activeName = withProfile { queryActive()?.name }
+        val selectedNode = querySelectedNodeLabel()
 
         uiState.update {
             it.copy(
@@ -165,7 +168,30 @@ class MainActivity : BaseActivity<Design<*>>() {
                 mode = state.mode,
                 hasProviders = providers.isNotEmpty(),
                 profileName = activeName,
+                selectedNode = selectedNode,
             )
+        }
+    }
+
+    /**
+     * Resolves the leaf proxy currently selected by the first selectable group so the
+     * Connection card never surfaces a bare group type like "Selector".
+     */
+    private suspend fun querySelectedNodeLabel(): String? {
+        return try {
+            withClash {
+                val names = queryProxyGroupNames(uiStore.proxyExcludeNotSelectable)
+                if (names.isEmpty()) return@withClash null
+
+                val groups = names.associateWith { name ->
+                    queryProxyGroup(name, ProxySort.Default)
+                }
+                val rootNow = groups[names.first()]?.now?.takeIf { it.isNotBlank() }
+                    ?: return@withClash null
+                ProxySelection.resolveLeafName(groups, rootNow)
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 

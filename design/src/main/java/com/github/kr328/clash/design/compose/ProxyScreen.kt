@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.core.model.Proxy
 import com.github.kr328.clash.core.model.ProxyGroup
+import com.github.kr328.clash.core.util.ProxySelection
 import com.github.kr328.clash.design.R
 
 data class ProxyUiState(
@@ -48,7 +52,12 @@ sealed interface ProxyAction {
     data class TestGroup(val group: String) : ProxyAction
 }
 
-/** Material 3 Compose selector screen with an adaptive proxy-card grid. */
+/**
+ * Material 3 selector screen with edge-to-edge insets and nested-group link labels.
+ *
+ * Scaffold owns system-bar offsets; the proxy grid receives bottom insets via
+ * [contentPadding] so cards can scroll under the navigation bar without clipping.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProxyScreen(
@@ -61,6 +70,7 @@ fun ProxyScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 title = {
@@ -91,6 +101,7 @@ fun ProxyScreen(
                         }
                     }
                 },
+                windowInsets = TopAppBarDefaults.windowInsets,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
@@ -100,7 +111,8 @@ fun ProxyScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = innerPadding.calculateTopPadding())
+                .consumeWindowInsets(PaddingValues(top = innerPadding.calculateTopPadding())),
         ) {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
@@ -129,7 +141,14 @@ fun ProxyScreen(
                 ProxyGrid(
                     groupName = selectedName,
                     group = group,
+                    groups = state.groups,
                     testing = state.testingGroup == selectedName,
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 8.dp,
+                        end = 20.dp,
+                        bottom = innerPadding.calculateBottomPadding() + 20.dp,
+                    ),
                     onAction = onAction,
                 )
             }
@@ -141,25 +160,38 @@ fun ProxyScreen(
 private fun ProxyGrid(
     groupName: String,
     group: ProxyGroup,
+    groups: Map<String, ProxyGroup>,
     testing: Boolean,
+    contentPadding: PaddingValues,
     onAction: (ProxyAction) -> Unit,
 ) {
+    val selectedLabel = remember(group.now, groups) {
+        if (group.now.isBlank()) ""
+        else ProxySelection.resolveLeafName(groups, group.now)
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 164.dp),
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 20.dp, top = 8.dp, end = 20.dp, bottom = 20.dp),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
             Text(
-                text = if (testing) stringResource(R.string.delay_test) else group.now,
+                text = when {
+                    testing -> stringResource(R.string.delay_test)
+                    selectedLabel.isBlank() -> group.now
+                    selectedLabel == group.now -> group.now
+                    else -> "${group.now} · $selectedLabel"
+                },
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         items(group.proxies, key = { it.name }) { proxy ->
             val selected = proxy.name == group.now
+            val subtitle = ProxySelection.subtitle(proxy, groups)
             ElevatedCard(
                 onClick = {
                     if (group.type == "Selector") onAction(ProxyAction.SelectProxy(groupName, proxy))
@@ -179,7 +211,7 @@ private fun ProxyGrid(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = proxy.title.ifBlank { proxy.name },
+                            text = if (proxy.isGroup) proxy.name else proxy.title.ifBlank { proxy.name },
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
@@ -193,9 +225,9 @@ private fun ProxyGrid(
                             )
                         }
                     }
-                    if (proxy.subtitle.isNotBlank()) {
+                    if (subtitle.isNotBlank()) {
                         Text(
-                            text = proxy.subtitle,
+                            text = subtitle,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 2,

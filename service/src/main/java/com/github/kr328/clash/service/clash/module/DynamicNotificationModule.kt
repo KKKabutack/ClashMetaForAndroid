@@ -71,9 +71,19 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
 
     private fun queryCurrentNode(): String? {
         return try {
-            Clash.queryGroupNames(true).firstNotNullOfOrNull { name ->
-                Clash.queryGroup(name, ProxySort.Default).now.takeIf { it.isNotBlank() }
+            val names = Clash.queryGroupNames(true)
+            val root = names.firstOrNull() ?: return null
+            var current = Clash.queryGroup(root, ProxySort.Default).now
+                .takeIf { it.isNotBlank() } ?: return null
+
+            // Walk nested Selector / URLTest groups so the notification title shows the
+            // concrete node instead of a parent group name (or a type like "Selector").
+            repeat(MAX_SELECTION_DEPTH) {
+                val nested = Clash.queryGroup(current, ProxySort.Default)
+                if (nested.type == "Unknown" || nested.now.isBlank()) return current
+                current = nested.now
             }
+            current
         } catch (e: Exception) {
             null
         }
@@ -120,6 +130,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
 
     companion object {
         private const val NODE_REFRESH_INTERVAL = 3
+        private const val MAX_SELECTION_DEPTH = 8
 
         /**
          * Compacts a formatted traffic string (e.g. "1.23 MiB") into a chip-friendly form

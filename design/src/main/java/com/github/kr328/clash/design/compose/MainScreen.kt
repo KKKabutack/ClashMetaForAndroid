@@ -75,6 +75,8 @@ data class MainUiState(
     val forwarded: String = "0 B",
     val mode: TunnelState.Mode = TunnelState.Mode.Rule,
     val profileName: String? = null,
+    /** Resolved leaf proxy currently selected by the first selectable group. */
+    val selectedNode: String? = null,
     val hasProviders: Boolean = false,
     val profiles: List<Profile> = emptyList(),
     val hasUpdatableProfiles: Boolean = false,
@@ -298,7 +300,8 @@ private fun ConnectionPage(
         item {
             ActionCard(
                 title = stringResource(R.string.endpoint_region),
-                description = stringResource(R.string.endpoint_region_summary),
+                description = state.selectedNode?.takeIf { it.isNotBlank() }
+                    ?: stringResource(R.string.endpoint_region_summary),
                 iconRes = R.drawable.ic_baseline_apps,
                 highlighted = true,
                 onClick = { onAction(MainAction.OpenProxy) },
