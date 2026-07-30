@@ -5,9 +5,12 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.ViewCompat
 import com.github.kr328.clash.common.compat.isAllowForceDarkCompat
 import com.github.kr328.clash.common.compat.isLightNavigationBarCompat
 import com.github.kr328.clash.common.compat.isLightStatusBarsCompat
@@ -18,7 +21,6 @@ import com.github.kr328.clash.design.model.DarkMode
 import com.github.kr328.clash.design.store.UiStore
 import com.github.kr328.clash.design.ui.DayNight
 import com.github.kr328.clash.design.util.resolveThemedBoolean
-import com.github.kr328.clash.design.util.resolveThemedColor
 import com.github.kr328.clash.design.util.showExceptionToast
 import com.github.kr328.clash.remote.Broadcasts
 import com.github.kr328.clash.remote.Remote
@@ -50,6 +52,16 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
                 setContentView(View(this))
             }
         }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // Re-apply appearance flags now that the decor view is attached to the window
+        // (insetsController is guaranteed to be available) and re-dispatch insets so that
+        // our surface padding listeners (set before setContentView) see up-to-date values.
+        window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
+        window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
+        ViewCompat.requestApplyInsets(window.decorView)
+    }
 
     private var defer: suspend () -> Unit = {}
     private var deferRunning = false
@@ -87,6 +99,24 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val systemDark = resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        enableEdgeToEdge(
+            statusBarStyle = if (systemDark) {
+                SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+            },
+            navigationBarStyle = if (systemDark) {
+                SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+            },
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+
         super.onCreate(savedInstanceState)
         applyDayNight()
 
@@ -94,6 +124,15 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         checkNotNull(getSystemService<ActivityManager>()).appTasks.forEach { task ->
             task.setExcludeFromRecents(uiStore.hideFromRecents)
         }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : androidx.activity.OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    onBackInvoked()
+                }
+            }
+        )
 
         launch {
             main()
@@ -150,8 +189,12 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        this.onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    open fun onBackInvoked() {
+        finish()
     }
 
     override fun onProfileChanged() {
@@ -205,16 +248,15 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
 
         window.isAllowForceDarkCompat = false
         window.isSystemBarsTranslucentCompat = true
-        
-        window.statusBarColor = resolveThemedColor(android.R.attr.statusBarColor)
-        window.navigationBarColor = resolveThemedColor(android.R.attr.navigationBarColor)
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
-        }
+        // Note: window.statusBarColor / navigationBarColor are intentionally not set here. They are
+        // deprecated and no-ops on API 35+; the (transparent) system bar colors come from the theme,
+        // and bar icon legibility is driven by the light-appearance controllers below.
+        window.isLightStatusBarsCompat = resolveThemedBoolean(android.R.attr.windowLightStatusBar)
+        window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
 
-        if (Build.VERSION.SDK_INT >= 27) {
-            window.isLightNavigationBarCompat = resolveThemedBoolean(android.R.attr.windowLightNavigationBar)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
         }
 
         this.dayNight = dayNight

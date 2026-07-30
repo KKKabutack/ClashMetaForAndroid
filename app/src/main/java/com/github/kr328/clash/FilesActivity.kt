@@ -122,7 +122,7 @@ class FilesActivity : BaseActivity<FilesDesign>() {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackInvoked() {
         design?.requests?.trySend(FilesDesign.Request.PopStack)
     }
 

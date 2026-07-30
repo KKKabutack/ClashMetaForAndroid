@@ -8,8 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.setUUID
-import com.github.kr328.clash.design.MainDesign
-import com.github.kr328.clash.design.ui.ToastDuration
 import com.github.kr328.clash.remote.Remote
 import com.github.kr328.clash.remote.StatusClient
 import com.github.kr328.clash.service.model.Profile
@@ -25,8 +23,7 @@ import com.github.kr328.clash.design.R
 class ExternalControlActivity : Activity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        @Suppress("DEPRECATION")
-        overridePendingTransition(0, 0)
+        overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0)
 
         when(intent.action) {
             Intent.ACTION_VIEW -> {
@@ -100,7 +97,6 @@ class ExternalControlActivity : Activity(), CoroutineScope by MainScope() {
 
     override fun finish() {
         super.finish()
-        @Suppress("DEPRECATION")
-        overridePendingTransition(0, 0)
+        overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
     }
 }

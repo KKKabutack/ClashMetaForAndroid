@@ -15,6 +15,7 @@ buildscript {
         classpath(libs.build.android)
         classpath(libs.build.kotlin.common)
         classpath(libs.build.kotlin.serialization)
+        classpath("org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.1.20")
         classpath(libs.build.ksp)
         classpath(libs.build.golang)
     }
@@ -30,6 +31,10 @@ subprojects {
     val isApp = name == "app"
 
     apply(plugin = if (isApp) "com.android.application" else "com.android.library")
+
+    if (name == "app" || name == "design") {
+        apply(plugin = "org.jetbrains.kotlin.plugin.compose")
+    }
 
     fun queryConfigProperty(key: String): Any? {
         val localProperties = Properties()
@@ -55,8 +60,8 @@ subprojects {
                 else "com.github.kr328.clash.$name"
             }
 
-            minSdk = 21
-            targetSdk = 35
+            minSdk = 36
+            targetSdk = 36
 
             versionName = "2.11.30"
             versionCode = 211030
@@ -81,7 +86,7 @@ subprojects {
             }
         }
 
-        ndkVersion = "29.0.14206865"
+        ndkVersion = "30.0.14904198"
 
         compileSdkVersion(defaultConfig.targetSdk!!)
 
@@ -175,6 +180,7 @@ subprojects {
         }
 
         buildFeatures.apply {
+            compose = name == "app" || name == "design"
             dataBinding {
                 isEnabled = name != "hideapi"
             }

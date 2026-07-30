@@ -2,6 +2,8 @@ package com.github.kr328.clash
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.work.Configuration
 import com.github.kr328.clash.common.Global
 import com.github.kr328.clash.common.compat.currentProcessName
 import com.github.kr328.clash.common.log.Log
@@ -12,7 +14,9 @@ import java.io.File
 import java.io.FileOutputStream
 
 @Suppress("unused")
-class MainApplication : Application() {
+class MainApplication : Application(), Configuration.Provider {
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().build()
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
@@ -38,7 +42,7 @@ class MainApplication : Application() {
     private fun extractGeoFiles() {
         clashDir.mkdirs()
 
-        val updateDate = packageManager.getPackageInfo(packageName, 0).lastUpdateTime
+        val updateDate = packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).lastUpdateTime
         val geoipFile = File(clashDir, "geoip.metadb")
         if (geoipFile.exists() && geoipFile.lastModified() < updateDate) {
             geoipFile.delete()

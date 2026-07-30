@@ -2,6 +2,7 @@ package com.github.kr328.clash.remote
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import com.github.kr328.clash.ApkBrokenActivity
 import com.github.kr328.clash.AppCrashedActivity
 import com.github.kr328.clash.common.Global
@@ -29,6 +30,8 @@ object Remote {
 
     fun launch() {
         ApplicationObserver.attach(Global.application)
+
+        LiveNotificationController.init(Global.application)
 
         ApplicationObserver.onVisibleChanged {
             if(it) {
@@ -68,6 +71,6 @@ object Remote {
     }
 
     private fun getLastUpdated(context: Context): Long {
-        return context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime
+        return context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0)).lastUpdateTime
     }
 }

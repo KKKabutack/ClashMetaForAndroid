@@ -6,9 +6,12 @@ import androidx.core.view.WindowInsetsCompat
 import com.github.kr328.clash.design.ui.Insets
 
 fun View.setOnInsertsChangedListener(adaptLandscape: Boolean = true, listener: (Insets) -> Unit) {
-    setOnApplyWindowInsetsListener { v, ins ->
-        val compat = WindowInsetsCompat.toWindowInsetsCompat(ins)
-        val insets = compat.getInsets(WindowInsetsCompat.Type.systemBars())
+    ViewCompat.setOnApplyWindowInsetsListener(this) { v, insetsCompat ->
+        // System bars + display cutout so content stays clear of the notch/punch-hole in every
+        // orientation (in landscape the cutout sits on the side where system bar insets are 0).
+        val insets = insetsCompat.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
 
         val rInsets = if (ViewCompat.getLayoutDirection(v) == ViewCompat.LAYOUT_DIRECTION_LTR) {
             Insets(
@@ -28,8 +31,9 @@ fun View.setOnInsertsChangedListener(adaptLandscape: Boolean = true, listener: (
 
         listener(if (adaptLandscape) rInsets.landscape(v.context) else rInsets)
 
-        compat.toWindowInsets()!!
+        // Do not consume insets for descendants; return as-is so inner views can also observe if needed.
+        insetsCompat
     }
 
-    requestApplyInsets()
+    ViewCompat.requestApplyInsets(this)
 }

@@ -16,6 +16,10 @@ abstract class Design<R>(val context: Context) :
     CoroutineScope by CoroutineScope(Dispatchers.Unconfined) {
     abstract val root: View
 
+    /** Optional anchor so Snackbars sit above floating chrome (e.g. bottom nav). */
+    open val snackbarAnchor: View?
+        get() = null
+
     val surface = Surface()
     val requests: Channel<R> = Channel(Channel.UNLIMITED)
 
@@ -41,7 +45,10 @@ abstract class Design<R>(val context: Context) :
                     ToastDuration.Long -> Snackbar.LENGTH_LONG
                     ToastDuration.Indefinite -> Snackbar.LENGTH_INDEFINITE
                 }
-            ).apply(configure).show()
+            ).apply {
+                snackbarAnchor?.let { anchorView = it }
+                configure()
+            }.show()
         }
     }
 

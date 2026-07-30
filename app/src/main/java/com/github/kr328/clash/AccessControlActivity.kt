@@ -127,7 +127,7 @@ class AccessControlActivity : BaseActivity<AccessControlDesign>() {
             val comparator = if (reverse) base.thenDescending(sort) else base.then(sort)
 
             val pm = packageManager
-            val packages = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS)
+            val packages = pm.getInstalledPackages(PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()))
 
             packages.asSequence()
                 .filter {

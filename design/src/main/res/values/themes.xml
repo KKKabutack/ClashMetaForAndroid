@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppBottomSheetStyle" parent="Widget.Material3.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_bottom_sheet</item>
     </style>
 
-    <style name="AppFullScreenDialogLightBase" parent="Theme.MaterialComponents.Light.Dialog">
+    <style name="AppFullScreenDialogLightBase" parent="Theme.Material3Expressive.Light.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -13,21 +13,45 @@
         <item name="paddingBottomSystemWindowInsets">false</item>
         <item name="paddingLeftSystemWindowInsets">false</item>
 
-        <item name="colorPrimary">@color/color_clash_light</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorPrimary">@color/color_primary_light</item>
+        <item name="colorOnPrimary">@color/color_on_primary_light</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_light</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_light</item>
+        <item name="colorSecondary">@color/color_secondary_light</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_light</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_light</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_light</item>
+        <item name="colorTertiary">@color/color_tertiary_light</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_light</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_light</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_light</item>
+        <item name="android:colorBackground">@color/color_light_background</item>
+        <item name="colorOnBackground">@color/color_on_background_light</item>
+        <item name="colorSurface">@color/color_surface_light</item>
+        <item name="colorOnSurface">@color/color_on_surface_light</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_light</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_light</item>
+        <item name="colorOutline">@color/color_outline_light</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_light</item>
+        <item name="colorError">@color/color_error_light</item>
+        <item name="colorOnError">@color/color_on_error_light</item>
+        <item name="colorErrorContainer">@color/color_error_container_light</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_light</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_light</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_light</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_light</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_light</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_light</item>
+        <item name="colorControlNormal">@color/color_on_surface_light</item>
         <item name="colorClashStopped">@color/color_light_clash_stopped</item>
         <item name="colorControlDisabled">@color/color_light_control_disabled</item>
-
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:windowBackground">@color/color_light_background</item>
     </style>
 
-    <style name="AppFullScreenDialogDarkBase" parent="Theme.MaterialComponents.Dialog">
+    <style name="AppFullScreenDialogDarkBase" parent="Theme.Material3Expressive.Dark.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -36,18 +60,41 @@
         <item name="paddingBottomSystemWindowInsets">false</item>
         <item name="paddingLeftSystemWindowInsets">false</item>
 
-        <item name="colorPrimary">@color/color_clash_dark</item>
-        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorPrimary">@color/color_primary_dark</item>
+        <item name="colorOnPrimary">@color/color_on_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_dark</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_dark</item>
+        <item name="colorSecondary">@color/color_secondary_dark</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_dark</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_dark</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_dark</item>
+        <item name="colorTertiary">@color/color_tertiary_dark</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_dark</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_dark</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_dark</item>
+        <item name="android:colorBackground">@color/color_dark_background</item>
+        <item name="colorOnBackground">@color/color_on_background_dark</item>
         <item name="colorSurface">@color/color_dark_surface</item>
+        <item name="colorOnSurface">@color/color_on_surface_dark</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_dark</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_dark</item>
+        <item name="colorOutline">@color/color_outline_dark</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_dark</item>
+        <item name="colorError">@color/color_error_dark</item>
+        <item name="colorOnError">@color/color_on_error_dark</item>
+        <item name="colorErrorContainer">@color/color_error_container_dark</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_dark</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_dark</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_dark</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_dark</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_dark</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_dark</item>
         <item name="colorControlDisabled">@color/color_dark_control_disabled</item>
         <item name="android:windowBackground">@color/color_dark_background</item>
-
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
         <item name="colorClashStopped">?attr/colorSurface</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="AppFullScreenDialogLight" parent="AppFullScreenDialogLightBase">
@@ -60,45 +107,90 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppBottomSheetDialogLightBase" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogLightBase" parent="Theme.Material3.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="paddingRightSystemWindowInsets">false</item>
         <item name="paddingBottomSystemWindowInsets">false</item>
         <item name="paddingLeftSystemWindowInsets">false</item>
 
-        <item name="colorPrimary">@color/color_clash_light</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorPrimary">@color/color_primary_light</item>
+        <item name="colorOnPrimary">@color/color_on_primary_light</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_light</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_light</item>
+        <item name="colorSecondary">@color/color_secondary_light</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_light</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_light</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_light</item>
+        <item name="colorTertiary">@color/color_tertiary_light</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_light</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_light</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_light</item>
+        <item name="android:colorBackground">@color/color_light_background</item>
+        <item name="colorOnBackground">@color/color_on_background_light</item>
+        <item name="colorSurface">@color/color_surface_light</item>
+        <item name="colorOnSurface">@color/color_on_surface_light</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_light</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_light</item>
+        <item name="colorOutline">@color/color_outline_light</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_light</item>
+        <item name="colorError">@color/color_error_light</item>
+        <item name="colorOnError">@color/color_on_error_light</item>
+        <item name="colorErrorContainer">@color/color_error_container_light</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_light</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_light</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_light</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_light</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_light</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_light</item>
+        <item name="colorControlNormal">@color/color_on_surface_light</item>
         <item name="colorClashStopped">@color/color_light_clash_stopped</item>
         <item name="colorControlDisabled">@color/color_light_control_disabled</item>
-
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
-
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="bottomSheetStyle">@style/AppBottomSheetStyle</item>
     </style>
 
-    <style name="AppBottomSheetDialogDarkBase" parent="Theme.MaterialComponents.BottomSheetDialog">
+    <style name="AppBottomSheetDialogDarkBase" parent="Theme.Material3.Dark.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="paddingRightSystemWindowInsets">false</item>
         <item name="paddingBottomSystemWindowInsets">false</item>
         <item name="paddingLeftSystemWindowInsets">false</item>
 
-        <item name="colorPrimary">@color/color_clash_dark</item>
-        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorPrimary">@color/color_primary_dark</item>
+        <item name="colorOnPrimary">@color/color_on_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_dark</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_dark</item>
+        <item name="colorSecondary">@color/color_secondary_dark</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_dark</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_dark</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_dark</item>
+        <item name="colorTertiary">@color/color_tertiary_dark</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_dark</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_dark</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_dark</item>
+        <item name="android:colorBackground">@color/color_dark_background</item>
+        <item name="colorOnBackground">@color/color_on_background_dark</item>
         <item name="colorSurface">@color/color_dark_surface</item>
+        <item name="colorOnSurface">@color/color_on_surface_dark</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_dark</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_dark</item>
+        <item name="colorOutline">@color/color_outline_dark</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_dark</item>
+        <item name="colorError">@color/color_error_dark</item>
+        <item name="colorOnError">@color/color_on_error_dark</item>
+        <item name="colorErrorContainer">@color/color_error_container_dark</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_dark</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_dark</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_dark</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_dark</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_dark</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_dark</item>
         <item name="colorControlDisabled">@color/color_dark_control_disabled</item>
-
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
         <item name="colorClashStopped">?attr/colorSurface</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
-
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="bottomSheetStyle">@style/AppBottomSheetStyle</item>
     </style>
 
@@ -112,58 +204,162 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppThemeLightBase" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppThemeLightBase" parent="Theme.Material3Expressive.Light.NoActionBar">
         <item name="android:windowBackground">@color/color_light_background</item>
-        <item name="android:ambientShadowAlpha">0.08</item>
+        <item name="android:ambientShadowAlpha">0.06</item>
         <item name="android:spotShadowAlpha">0.08</item>
 
-        <item name="colorPrimary">@color/color_clash_light</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorPrimary">@color/color_primary_light</item>
+        <item name="colorOnPrimary">@color/color_on_primary_light</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_light</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_light</item>
+        <item name="colorSecondary">@color/color_secondary_light</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_light</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_light</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_light</item>
+        <item name="colorTertiary">@color/color_tertiary_light</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_light</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_light</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_light</item>
+        <item name="android:colorBackground">@color/color_light_background</item>
+        <item name="colorOnBackground">@color/color_on_background_light</item>
+        <item name="colorSurface">@color/color_surface_light</item>
+        <item name="colorOnSurface">@color/color_on_surface_light</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_light</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_light</item>
+        <item name="colorOutline">@color/color_outline_light</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_light</item>
+        <item name="colorError">@color/color_error_light</item>
+        <item name="colorOnError">@color/color_on_error_light</item>
+        <item name="colorErrorContainer">@color/color_error_container_light</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_light</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_light</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_light</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_light</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_light</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_light</item>
+        <item name="colorControlNormal">@color/color_on_surface_light</item>
         <item name="colorClashStopped">@color/color_light_clash_stopped</item>
         <item name="colorControlDisabled">@color/color_light_control_disabled</item>
-
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
-        <item name="colorLogo">?attr/colorControlActivated</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
-
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogLight</item>
-        <item name="fullScreenDialogTheme">@style/AppFullScreenDialogLight</item>
-    </style>
-
-    <style name="AppThemeDarkBase" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="android:windowBackground">@color/color_dark_background</item>
-        <item name="android:ambientShadowAlpha">0.08</item>
-        <item name="android:spotShadowAlpha">0.08</item>
-
-        <item name="colorPrimary">@color/color_clash_dark</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorSurface">@color/color_dark_surface</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlDisabled">@color/color_dark_control_disabled</item>
-
-        <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="colorSecondary">?attr/colorPrimary</item>
-        <item name="colorOnSecondary">?attr/colorOnPrimary</item>
-        <item name="colorControlActivated">?attr/colorPrimary</item>
-        <item name="colorClashStopped">?attr/colorSurface</item>
-        <item name="colorLogo">?attr/colorControlNormal</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
-
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogDark</item>
-        <item name="fullScreenDialogTheme">@style/AppFullScreenDialogDark</item>
-    </style>
-
-    <style name="AppThemeLight" parent="AppThemeLightBase">
-        <item name="android:statusBarColor">@color/color_system_ui_overlay</item>
-        <item name="android:navigationBarColor">@color/color_system_ui_overlay</item>
-    </style>
-
-    <style name="AppThemeDark" parent="AppThemeDarkBase">
+        <item name="colorLogo">?attr/colorPrimary</item>
+        <item name="isDarkTheme">false</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogLight</item>
+        <item name="fullScreenDialogTheme">@style/AppFullScreenDialogLight</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.App.Corner.ExtraLarge</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.App.Corner.Large</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.App.Corner.Medium</item>
+    </style>
+
+    <style name="AppThemeDarkBase" parent="Theme.Material3Expressive.Dark.NoActionBar">
+        <item name="android:windowBackground">@color/color_dark_background</item>
+        <item name="android:ambientShadowAlpha">0.12</item>
+        <item name="android:spotShadowAlpha">0.16</item>
+
+        <item name="colorPrimary">@color/color_primary_dark</item>
+        <item name="colorOnPrimary">@color/color_on_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/color_primary_container_dark</item>
+        <item name="colorOnPrimaryContainer">@color/color_on_primary_container_dark</item>
+        <item name="colorSecondary">@color/color_secondary_dark</item>
+        <item name="colorOnSecondary">@color/color_on_secondary_dark</item>
+        <item name="colorSecondaryContainer">@color/color_secondary_container_dark</item>
+        <item name="colorOnSecondaryContainer">@color/color_on_secondary_container_dark</item>
+        <item name="colorTertiary">@color/color_tertiary_dark</item>
+        <item name="colorOnTertiary">@color/color_on_tertiary_dark</item>
+        <item name="colorTertiaryContainer">@color/color_tertiary_container_dark</item>
+        <item name="colorOnTertiaryContainer">@color/color_on_tertiary_container_dark</item>
+        <item name="android:colorBackground">@color/color_dark_background</item>
+        <item name="colorOnBackground">@color/color_on_background_dark</item>
+        <item name="colorSurface">@color/color_dark_surface</item>
+        <item name="colorOnSurface">@color/color_on_surface_dark</item>
+        <item name="colorSurfaceVariant">@color/color_surface_variant_dark</item>
+        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant_dark</item>
+        <item name="colorOutline">@color/color_outline_dark</item>
+        <item name="colorOutlineVariant">@color/color_outline_variant_dark</item>
+        <item name="colorError">@color/color_error_dark</item>
+        <item name="colorOnError">@color/color_on_error_dark</item>
+        <item name="colorErrorContainer">@color/color_error_container_dark</item>
+        <item name="colorOnErrorContainer">@color/color_on_error_container_dark</item>
+        <item name="colorSurfaceContainerLowest">@color/color_surface_container_lowest_dark</item>
+        <item name="colorSurfaceContainerLow">@color/color_surface_container_low_dark</item>
+        <item name="colorSurfaceContainer">@color/color_surface_container_dark</item>
+        <item name="colorSurfaceContainerHigh">@color/color_surface_container_high_dark</item>
+        <item name="colorSurfaceContainerHighest">@color/color_surface_container_highest_dark</item>
+        <item name="colorControlNormal">@color/color_on_surface_dark</item>
+        <item name="colorControlDisabled">@color/color_dark_control_disabled</item>
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="colorClashStopped">?attr/colorSurfaceContainerHigh</item>
+        <item name="colorLogo">?attr/colorOnSurface</item>
+        <item name="isDarkTheme">true</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogDark</item>
+        <item name="fullScreenDialogTheme">@style/AppFullScreenDialogDark</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.App.Corner.ExtraLarge</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.App.Corner.Large</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.App.Corner.Medium</item>
+    </style>
+
+    <style name="AppThemeLight" parent="AppThemeLightBase" />
+
+    <style name="AppThemeDark" parent="AppThemeDarkBase" />
+
+    <style name="ShapeAppearance.App.Corner.ExtraLarge" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Corner.Large" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Corner.Medium" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="Widget.App.FloatingBottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@drawable/bg_floating_nav</item>
+        <item name="elevation">8dp</item>
+        <item name="itemIconTint">@color/nav_item_tint</item>
+        <item name="itemTextColor">@color/nav_item_tint</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.App.BottomNav.ActiveIndicator</item>
+        <item name="itemPaddingTop">10dp</item>
+        <item name="itemPaddingBottom">10dp</item>
+    </style>
+
+    <style name="Widget.App.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?attr/colorSecondaryContainer</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.Corner.Medium</item>
+    </style>
+
+    <style name="Widget.App.ConnectButton" parent="Widget.Material3.Button.IconButton.Filled">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="iconSize">48dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">48dp</item>
+        <item name="elevation">6dp</item>
+    </style>
+
+    <!-- Independent routing-mode choices. Each button keeps this same shape. -->
+    <style name="Widget.App.ModeToggleButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:checkable">true</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/mode_button_background</item>
+        <item name="strokeColor">@color/mode_button_stroke</item>
+        <item name="android:textColor">@color/mode_button_text</item>
     </style>
 </resources>

@@ -45,9 +45,17 @@
     <dimen name="item_midden_margin">10dp</dimen>
 
     <!-- Large Card -->
-    <dimen name="large_action_card_radius">8dp</dimen>
-    <dimen name="large_action_card_elevation">5dp</dimen>
+    <dimen name="large_action_card_radius">20dp</dimen>
+    <dimen name="large_action_card_elevation">3dp</dimen>
     <dimen name="large_action_card_min_height">85dp</dimen>
+
+    <!-- Main shell -->
+    <dimen name="floating_nav_margin">16dp</dimen>
+    <dimen name="floating_nav_height">72dp</dimen>
+    <dimen name="floating_nav_fab_gap">16dp</dimen>
+    <dimen name="connect_button_size">128dp</dimen>
+    <dimen name="main_card_corner">24dp</dimen>
+    <dimen name="main_section_gap">12dp</dimen>
 
     <!-- Tips -->
     <dimen name="tips_icon_size">25dp</dimen>
