@@ -233,11 +233,20 @@ private fun ProxyGrid(
                             maxLines = 2,
                         )
                     }
-                    if (proxy.delay >= 0) {
+                    if (proxy.delay in 0..65534) {
                         Text(
                             text = "${proxy.delay} ms",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
+                        )
+                    } else {
+                        // clash/mihomo LastDelayForTestUrl returns uint16 max (65535) as the
+                        // "not tested / unreachable" sentinel. Surface that as an explicit label
+                        // instead of leaking the raw sentinel value to the user.
+                        Text(
+                            text = stringResource(R.string.delay_untested),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
