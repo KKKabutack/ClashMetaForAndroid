@@ -213,6 +213,7 @@
     <string name="more">더보기</string>
     <string name="save">저장</string>
     <string name="delay_test">지연 수치 테스트</string>
+    <string name="delay_untested">테스트 안 됨</string>
     <string name="format_provider_type">%1$s(%2$s)</string>
     <string name="rule">규칙</string>
     <string name="http">HTTP</string>

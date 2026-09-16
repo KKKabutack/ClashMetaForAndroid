@@ -74,6 +74,7 @@
     <string name="default_name_server">Máy chủ định danh mặc định</string>
     <string name="delay">Độ trễ</string>
     <string name="delay_test">Kiểm tra độ trễ</string>
+    <string name="delay_untested">Chưa kiểm tra</string>
     <string name="delete">Xoá</string>
     <string name="delete_all_logs">Xóa tất cả nhật ký</string>
     <string name="delete_all_logs_warn">Tất cả nhật ký lịch sử sẽ *MẤT*</string>
