@@ -16,11 +16,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -93,11 +95,25 @@ fun ProxyScreen(
                 },
                 actions = {
                     selectedName?.let { name ->
-                        IconButton(onClick = { onAction(ProxyAction.TestGroup(name)) }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_baseline_flash_on),
-                                contentDescription = stringResource(R.string.delay_test),
-                            )
+                        // While a latency test is in flight the flash icon becomes a spinner and
+                        // the button is disabled so users get visible feedback and can't spam
+                        // additional tests (which the Go core would otherwise merge via singleDo).
+                        IconButton(
+                            onClick = { onAction(ProxyAction.TestGroup(name)) },
+                            enabled = state.testingGroup == null,
+                        ) {
+                            if (state.testingGroup == name) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp,
+                                    color = LocalContentColor.current,
+                                )
+                            } else {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_baseline_flash_on),
+                                    contentDescription = stringResource(R.string.delay_test),
+                                )
+                            }
                         }
                     }
                 },
