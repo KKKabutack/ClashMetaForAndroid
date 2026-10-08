@@ -38,7 +38,17 @@ class ProxyActivity : BaseActivity<Design<*>>() {
         while (isActive) {
             select<Unit> {
                 events.onReceive {
-                    if (it == Event.ProfileLoaded) reloadGroups()
+                    when (it) {
+                        Event.ProfileLoaded -> reloadGroups()
+                        // The core is reset on VPN stop and recreated services; reload
+                        // the profile so selections keep working instead of hitting a
+                        // stale core (which would silently drop stored selections).
+                        Event.ClashStop, Event.ServiceRecreated, Event.ProfileChanged -> {
+                            ensureProfileLoaded()
+                            reloadGroups()
+                        }
+                        else -> Unit
+                    }
                 }
                 actions.onReceive(::handleAction)
             }

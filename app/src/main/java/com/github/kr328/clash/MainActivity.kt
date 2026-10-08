@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : BaseActivity<Design<*>>() {
     private val uiState = MutableStateFlow(MainUiState())
     private val actions = Channel<MainAction>(Channel.UNLIMITED)
+    private var disconnectedProfileLoaded = false
 
     override suspend fun main() {
         setContent {
@@ -71,6 +72,9 @@ class MainActivity : BaseActivity<Design<*>>() {
                         Event.ServiceRecreated,
                         Event.ClashStop, Event.ClashStart,
                         Event.ProfileLoaded, Event.ProfileChanged -> {
+                            if (it == Event.ServiceRecreated || it == Event.ClashStop || it == Event.ProfileChanged) {
+                                disconnectedProfileLoaded = false
+                            }
                             refreshUi()
                             refreshProfiles()
                         }
@@ -123,10 +127,21 @@ class MainActivity : BaseActivity<Design<*>>() {
                 startActivity(PropertiesActivity::class.intent.setUUID(uuid))
             }
             is MainAction.PatchMode -> {
+                // Persist slot survives core resets, so the mode is kept across
+                // restarts and applied by every Clash.load (VPN start included).
                 withClash {
-                    queryOverride(Clash.OverrideSlot.Session).also {
+                    queryOverride(Clash.OverrideSlot.Persist).also {
                         it.mode = action.mode
-                        patchOverride(Clash.OverrideSlot.Session, it)
+                        patchOverride(Clash.OverrideSlot.Persist, it)
+                    }
+                }
+                if (!clashRunning) {
+                    // No ConfigurationModule is alive to reload on the override
+                    // broadcast while disconnected; apply it to the idle core.
+                    try {
+                        withClash { loadActiveProfile() }
+                    } catch (_: Exception) {
+                        // Mode is still persisted and applied on next connect.
                     }
                 }
                 refreshUi()
@@ -155,8 +170,16 @@ class MainActivity : BaseActivity<Design<*>>() {
     }
 
     private suspend fun refreshUi() {
+        if (!clashRunning) {
+            ensureProfileLoadedForUi()
+        }
+
         val running = clashRunning
-        val state = withClash { queryTunnelState() }
+        // The desired mode lives in the Persist override; the tunnel state only
+        // reflects the profile default before anything has been loaded.
+        val mode = withClash {
+            queryOverride(Clash.OverrideSlot.Persist).mode ?: queryTunnelState().mode
+        }
         val providers = withClash { queryProviders() }
         val activeName = withProfile { queryActive()?.name }
         val selectedNode = querySelectedNodeLabel()
@@ -164,11 +187,26 @@ class MainActivity : BaseActivity<Design<*>>() {
         uiState.update {
             it.copy(
                 running = running,
-                mode = state.mode,
+                mode = mode,
                 hasProviders = providers.isNotEmpty(),
                 profileName = activeName,
                 selectedNode = selectedNode,
             )
+        }
+    }
+
+    /**
+     * Loads the active profile into the idle core once per disconnect cycle so
+     * the selected node and providers stay visible while disconnected. Silent:
+     * lacking a profile is a normal state on the main screen.
+     */
+    private suspend fun ensureProfileLoadedForUi() {
+        if (disconnectedProfileLoaded) return
+        disconnectedProfileLoaded = true
+
+        try {
+            withClash { loadActiveProfile() }
+        } catch (_: Exception) {
         }
     }
 
