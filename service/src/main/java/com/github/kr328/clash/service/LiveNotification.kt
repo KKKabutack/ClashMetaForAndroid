@@ -21,12 +21,9 @@ import com.github.kr328.clash.common.constants.Intents
  * notification is shown as a regular ongoing foreground notification. [NotificationCompat] handles
  * this version gating for us, so no manual SDK checks are required.
  *
- * The single notification id is reused across three states so they replace each other:
+ * The single notification id is reused across two states so they replace each other:
  *  - [buildConnecting] / [buildConnected]: owned by the foreground service while the tunnel is up
  *    (node + live speed + a Disconnect action).
- *  - [buildDisconnected]: a lightweight control card posted by the app so the user can turn the
- *    VPN on directly from the shade. It is intentionally not promoted because nothing is in
- *    progress while disconnected.
  */
 object LiveNotification {
     const val CHANNEL_ID = "clash_status_channel"
@@ -34,7 +31,6 @@ object LiveNotification {
     val NOTIFICATION_ID: Int = R.id.nf_clash_status
 
     private const val REQUEST_CONTENT = 0xC1A50001.toInt()
-    private const val REQUEST_CONNECT = 0xC1A50002.toInt()
     private const val REQUEST_DISCONNECT = 0xC1A50003.toInt()
 
     fun createChannel(context: Context) {
@@ -83,32 +79,9 @@ object LiveNotification {
             .build()
     }
 
-    fun buildDisconnected(context: Context): Notification {
-        return baseBuilder(context)
-            // Not a live update: there is no ongoing activity while disconnected, so keep it
-            // dismissible and unpromoted - it is purely a quick "connect" control.
-            .setOngoing(false)
-            .setContentTitle(context.getString(R.string.notification_disconnected))
-            .setContentText(context.getString(R.string.notification_disconnected_summary))
-            .addAction(connectAction(context))
-            .build()
-    }
-
-    fun showDisconnected(context: Context) {
-        val manager = NotificationManagerCompat.from(context)
-
-        if (!manager.areNotificationsEnabled()) return
-
-        notify(context, buildDisconnected(context))
-    }
-
     @SuppressLint("MissingPermission")
     fun notify(context: Context, notification: Notification) {
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
-    }
-
-    fun cancel(context: Context) {
-        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
     }
 
     private fun baseBuilder(context: Context): NotificationCompat.Builder {
@@ -135,14 +108,6 @@ object LiveNotification {
             intent,
             pendingIntentFlags(PendingIntent.FLAG_UPDATE_CURRENT)
         )
-    }
-
-    private fun connectAction(context: Context): NotificationCompat.Action {
-        return NotificationCompat.Action.Builder(
-            R.drawable.ic_notification_connect,
-            context.getString(R.string.notification_action_connect),
-            controlIntent(context, Intents.ACTION_START_CLASH, REQUEST_CONNECT)
-        ).build()
     }
 
     private fun disconnectAction(context: Context): NotificationCompat.Action {
