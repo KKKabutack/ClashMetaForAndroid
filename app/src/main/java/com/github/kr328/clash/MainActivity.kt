@@ -29,7 +29,6 @@ import com.github.kr328.clash.design.compose.ClashTheme
 import com.github.kr328.clash.design.compose.MainAction
 import com.github.kr328.clash.design.compose.MainScreen
 import com.github.kr328.clash.design.compose.MainUiState
-import com.github.kr328.clash.remote.LiveNotificationController
 import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.util.startClashService
 import com.github.kr328.clash.util.stopClashService
@@ -256,19 +255,13 @@ class MainActivity : BaseActivity<Design<*>>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted ->
-                if (isGranted) LiveNotificationController.refresh()
-            }
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.POST_NOTIFICATIONS,
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                LiveNotificationController.refresh()
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.POST_NOTIFICATIONS,
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            registerForActivityResult(RequestPermission()) { }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
         setupShortcuts()
     }
