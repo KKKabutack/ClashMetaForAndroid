@@ -52,6 +52,7 @@ data class ProxyUiState(
     val groups: Map<String, ProxyGroup> = emptyMap(),
     val selectedGroup: String? = null,
     val testingGroup: String? = null,
+    val loading: Boolean = true,
 )
 
 sealed interface ProxyAction {
@@ -96,7 +97,17 @@ fun ProxyScreen(
                     .fillMaxSize()
                     .hazeSource(hazeState),
             ) {
-                if (group == null) {
+                if (state.loading) {
+                    // 核心载入配置/查询分组期间不渲染空态提示，避免"没有可以显示的组"闪现
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = topOverlayHeight),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else if (group == null) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()

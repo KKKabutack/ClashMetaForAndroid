@@ -58,10 +58,15 @@ class FilesActivity : BaseActivity<FilesDesign>() {
                                     finish()
                                 } else {
                                     stack.pop()
+
+                                    // 提交后不退出而是回上级目录，回弹复位并按栈深决定是否继续拦截
+                                    revertBackAnimation()
+                                    setBackInterceptionEnabled(stack.isNotEmpty())
                                 }
                             }
                             is FilesDesign.Request.OpenDirectory -> {
                                 stack.push(it.file.id)
+                                setBackInterceptionEnabled(true)
                             }
                             is FilesDesign.Request.OpenFile -> {
                                 startActivityForResult(
