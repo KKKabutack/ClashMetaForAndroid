@@ -1,11 +1,11 @@
 package com.github.kr328.clash.design.compose
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,9 +15,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -29,9 +28,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +45,8 @@ import com.github.kr328.clash.core.model.Proxy
 import com.github.kr328.clash.core.model.ProxyGroup
 import com.github.kr328.clash.core.util.ProxySelection
 import com.github.kr328.clash.design.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 data class ProxyUiState(
     val groups: Map<String, ProxyGroup> = emptyMap(),
@@ -57,8 +64,9 @@ sealed interface ProxyAction {
 /**
  * Material 3 selector screen with edge-to-edge insets and nested-group link labels.
  *
- * Scaffold owns system-bar offsets; the proxy grid receives bottom insets via
- * [contentPadding] so cards can scroll under the navigation bar without clipping.
+ * The scrollable proxy grid is full-bleed and captured via Haze; the glass overlay
+ * (top app bar + group chips) floats above it, and the grid offsets its first row
+ * by the measured overlay height. Cards scroll underneath the glass while scrolling.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,103 +78,121 @@ fun ProxyScreen(
     val selectedName = state.selectedGroup ?: state.groups.keys.firstOrNull()
     val group = selectedName?.let(state.groups::get)
 
+    val hazeState = rememberHazeState()
+    val barGlassStyle = rememberLiquidGlassStyle(shape = RoundedCornerShape(0.dp))
+    val density = LocalDensity.current
+    var topOverlayHeightPx by remember { mutableIntStateOf(0) }
+    val topOverlayHeight = with(density) { topOverlayHeightPx.toDp() }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(stringResource(R.string.endpoint_region))
-                        Text(
-                            stringResource(R.string.endpoint_region_summary),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onAction(ProxyAction.Back) }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_baseline_arrow_back),
-                            contentDescription = stringResource(R.string.close),
-                        )
-                    }
-                },
-                actions = {
-                    selectedName?.let { name ->
-                        // While a latency test is in flight the flash icon becomes a spinner and
-                        // the button is disabled so users get visible feedback and can't spam
-                        // additional tests (which the Go core would otherwise merge via singleDo).
-                        IconButton(
-                            onClick = { onAction(ProxyAction.TestGroup(name)) },
-                            enabled = state.testingGroup == null,
-                        ) {
-                            if (state.testingGroup == name) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    strokeWidth = 2.dp,
-                                    color = LocalContentColor.current,
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_baseline_flash_on),
-                                    contentDescription = stringResource(R.string.delay_test),
-                                )
-                            }
-                        }
-                    }
-                },
-                windowInsets = TopAppBarDefaults.windowInsets,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-            )
-        },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-                .consumeWindowInsets(PaddingValues(top = innerPadding.calculateTopPadding())),
-        ) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Scrollable content is full-bleed so cards slide underneath the glass
+            // overlay while scrolling; the overlay height offsets the first row.
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(hazeState),
             ) {
-                items(state.groups.keys.toList(), key = { it }) { name ->
-                    FilterChip(
-                        selected = name == selectedName,
-                        onClick = { onAction(ProxyAction.SelectGroup(name)) },
-                        label = { Text(name) },
+                if (group == null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = topOverlayHeight),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.proxy_empty_tips),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                } else {
+                    ProxyGrid(
+                        groupName = selectedName,
+                        group = group,
+                        groups = state.groups,
+                        testing = state.testingGroup == selectedName,
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            top = topOverlayHeight + 8.dp,
+                            end = 20.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 20.dp,
+                        ),
+                        onAction = onAction,
                     )
                 }
             }
-            if (group == null) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        text = stringResource(R.string.proxy_empty_tips),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-            } else {
-                ProxyGrid(
-                    groupName = selectedName,
-                    group = group,
-                    groups = state.groups,
-                    testing = state.testingGroup == selectedName,
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        top = 8.dp,
-                        end = 20.dp,
-                        bottom = innerPadding.calculateBottomPadding() + 20.dp,
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { topOverlayHeightPx = it.size.height }
+                    .liquidGlass(state = hazeState, style = barGlassStyle),
+            ) {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text(stringResource(R.string.endpoint_region))
+                            Text(
+                                stringResource(R.string.endpoint_region_summary),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onAction(ProxyAction.Back) }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_baseline_arrow_back),
+                                contentDescription = stringResource(R.string.close),
+                            )
+                        }
+                    },
+                    actions = {
+                        selectedName?.let { name ->
+                            // While a latency test is in flight the flash icon becomes a spinner and
+                            // the button is disabled so users get visible feedback and can't spam
+                            // additional tests (which the Go core would otherwise merge via singleDo).
+                            IconButton(
+                                onClick = { onAction(ProxyAction.TestGroup(name)) },
+                                enabled = state.testingGroup == null,
+                            ) {
+                                if (state.testingGroup == name) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        strokeWidth = 2.dp,
+                                        color = LocalContentColor.current,
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_baseline_flash_on),
+                                        contentDescription = stringResource(R.string.delay_test),
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    windowInsets = TopAppBarDefaults.windowInsets,
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
                     ),
-                    onAction = onAction,
                 )
+                LazyRow(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(state.groups.keys.toList(), key = { it }) { name ->
+                        FilterChip(
+                            selected = name == selectedName,
+                            onClick = { onAction(ProxyAction.SelectGroup(name)) },
+                            label = { Text(name) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -208,16 +234,13 @@ private fun ProxyGrid(
         items(group.proxies, key = { it.name }) { proxy ->
             val selected = proxy.name == group.now
             val subtitle = ProxySelection.subtitle(proxy, groups)
-            ElevatedCard(
+            GlassCard(
                 onClick = {
                     if (group.type == "Selector") onAction(ProxyAction.SelectProxy(groupName, proxy))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                    else MaterialTheme.colorScheme.surfaceVariant,
-                ),
+                tint = if (selected) rememberGlassAccent() else rememberGlassCream(),
             ) {
                 Column(
                     modifier = Modifier
