@@ -91,8 +91,15 @@ fun ClashTheme(content: @Composable () -> Unit) {
         )
     }
 
+    // Glass design language: shade the page background down a touch so the creamy
+    // glass surfaces (dock, cards, buttons) read as distinct materials against it.
+    val isDark = context.resolveThemedBoolean(R.attr.isDarkTheme)
+    val shadedScheme = scheme.copy(
+        background = darkenForGlass(scheme.background, if (isDark) 0.10f else 0.05f),
+    )
+
     MaterialTheme(
-        colorScheme = scheme,
+        colorScheme = shadedScheme,
         shapes = Shapes(
             extraSmall = RoundedCornerShape(12.dp),
             small = RoundedCornerShape(16.dp),

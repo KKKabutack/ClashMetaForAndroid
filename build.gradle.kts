@@ -2,6 +2,7 @@
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
+import org.gradle.api.plugins.BasePluginExtension
 import java.net.URL
 import java.util.*
 
@@ -15,7 +16,7 @@ buildscript {
         classpath(libs.build.android)
         classpath(libs.build.kotlin.common)
         classpath(libs.build.kotlin.serialization)
-        classpath("org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.1.20")
+        classpath(libs.build.compose.compiler)
         classpath(libs.build.ksp)
         classpath(libs.build.golang)
     }
@@ -29,8 +30,16 @@ subprojects {
     }
 
     val isApp = name == "app"
+    val projectVersion = "2.11.35"
+    val projectVersionCode = 211035
 
     apply(plugin = if (isApp) "com.android.application" else "com.android.library")
+
+    if (isApp) {
+        configure<BasePluginExtension> {
+            archivesName = "cmfa-$projectVersion"
+        }
+    }
 
     if (name == "app" || name == "design") {
         apply(plugin = "org.jetbrains.kotlin.plugin.compose")
@@ -63,8 +72,8 @@ subprojects {
             minSdk = 36
             targetSdk = 36
 
-            versionName = "2.11.35"
-            versionCode = 211035
+            versionName = projectVersion
+            versionCode = projectVersionCode
 
             resValue("string", "release_name", "v$versionName")
             resValue("integer", "release_code", "$versionCode")
@@ -81,14 +90,14 @@ subprojects {
 
             if (!isApp) {
                 consumerProguardFiles("consumer-rules.pro")
-            } else {
-                setProperty("archivesBaseName", "cmfa-$versionName")
             }
         }
 
         ndkVersion = "30.0.14904198"
 
-        compileSdkVersion(defaultConfig.targetSdk!!)
+        // compose 1.12+ (pulled in by Haze) requires compiling against API 37;
+        // targetSdk stays 36 to avoid opting into new runtime behavior.
+        compileSdkVersion(37)
 
         if (isApp) {
             packagingOptions {
@@ -182,6 +191,7 @@ subprojects {
 
         buildFeatures.apply {
             compose = name == "app" || name == "design"
+            resValues = true
             dataBinding {
                 isEnabled = name != "hideapi"
             }

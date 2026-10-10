@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2025.06.01")
+    val composeBom = platform("androidx.compose:compose-bom:2026.09.00")
 
     implementation(project(":common"))
     implementation(project(":core"))
@@ -27,4 +27,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    implementation(libs.haze.glass)
 }

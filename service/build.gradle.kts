@@ -22,11 +22,9 @@ dependencies {
     implementation(libs.androidx.workmanager)
 }
 
-afterEvaluate {
-    android {
-        libraryVariants.forEach {
-            sourceSets[it.name].kotlin.srcDir(buildDir.resolve("generated/ksp/${it.name}/kotlin"))
-            sourceSets[it.name].java.srcDir(buildDir.resolve("generated/ksp/${it.name}/java"))
-        }
+androidComponents {
+    onVariants { variant ->
+        variant.sources.kotlin?.addStaticSourceDirectory("build/generated/ksp/${variant.name}/kotlin")
+        variant.sources.java?.addStaticSourceDirectory("build/generated/ksp/${variant.name}/java")
     }
 }

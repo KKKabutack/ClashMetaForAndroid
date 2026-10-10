@@ -1,13 +1,20 @@
 package com.github.kr328.clash.design.compose
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,8 +25,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,21 +36,14 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -62,6 +65,8 @@ import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.core.model.TunnelState
 import com.github.kr328.clash.design.R
 import com.github.kr328.clash.service.model.Profile
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import java.util.UUID
 
 enum class MainDestination(val labelRes: Int, val iconRes: Int) {
@@ -109,8 +114,8 @@ sealed interface MainAction {
 /**
  * Main Compose shell. The three destinations are peers; profile management lives
  * only under Endpoints, avoiding the old Connection-page shortcut that merely
- * switched tabs. The navigation is a floating Material surface, while Scaffold
- * owns its content and FAB offsets so they never overlap system navigation.
+ * switched tabs. The navigation dock and the profile FAB are Liquid Glass
+ * materials; Scaffold owns content offsets so they never overlap system navigation.
  */
 @Composable
 fun MainScreen(
@@ -119,6 +124,21 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     var destination by remember { mutableStateOf(MainDestination.Connection) }
+
+    val hazeState = rememberHazeState()
+    val dockGlassStyle = rememberLiquidGlassStyle()
+    val lensGlassStyle = rememberLiquidGlassStyle(
+        tint = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.72f),
+        shape = RoundedCornerShape(percent = 50),
+        pressScale = 0.96f,
+    )
+    val fabGlassStyle = rememberLiquidGlassStyle(
+        shape = RoundedCornerShape(percent = 50),
+        pressScale = 0.94f,
+    )
+    val tabInteractions = remember {
+        List(MainDestination.entries.size) { MutableInteractionSource() }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -129,25 +149,48 @@ fun MainScreen(
                     .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 12.dp),
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    shadowElevation = 8.dp,
-                    tonalElevation = 2.dp,
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .liquidGlass(state = hazeState, style = dockGlassStyle),
                 ) {
+                    val itemWidth = (maxWidth - 12.dp - 8.dp) / MainDestination.entries.size
+                    // Glass lens highlighting the selected tab; slides like the iOS dock.
+                    // Narrower than the touch cell and inset 6dp per side so its pill
+                    // corners stay inside the dock's 28dp corner curvature.
+                    val lensOffset by animateDpAsState(
+                        targetValue = 12.dp + (itemWidth + 4.dp) * destination.ordinal,
+                        animationSpec = spring(
+                            dampingRatio = 0.86f,
+                            stiffness = Spring.StiffnessMediumLow,
+                        ),
+                        label = "dock_lens_offset",
+                    )
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .offset(x = lensOffset)
+                            .width(itemWidth - 12.dp)
+                            .height(52.dp)
+                            .liquidGlass(
+                                state = hazeState,
+                                style = lensGlassStyle,
+                                interactionSource = tabInteractions[destination.ordinal],
+                            ),
+                    )
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp)
+                            .fillMaxSize()
                             .padding(horizontal = 6.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         MainDestination.entries.forEach { item ->
-                            FloatingToolbarItem(
+                            DockItem(
                                 item = item,
                                 selected = destination == item,
+                                interactionSource = tabInteractions[item.ordinal],
                                 onClick = { destination = item },
                             )
                         }
@@ -157,27 +200,44 @@ fun MainScreen(
         },
         floatingActionButton = {
             if (destination == MainDestination.Endpoints) {
-                FloatingActionButton(onClick = { onAction(MainAction.CreateProfile) }) {
+                val fabInteraction = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .liquidGlass(
+                            state = hazeState,
+                            style = fabGlassStyle,
+                            interactionSource = fabInteraction,
+                        )
+                        .clickable(
+                            interactionSource = fabInteraction,
+                            indication = null,
+                        ) { onAction(MainAction.CreateProfile) },
+                    contentAlignment = Alignment.Center,
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_add),
                         contentDescription = stringResource(R.string._new),
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
         },
     ) { contentPadding ->
-        AnimatedContent(
-            targetState = destination,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(220, delayMillis = 40)) togetherWith
-                    fadeOut(animationSpec = tween(120))
-            },
-            label = "main_destination",
-        ) { currentDestination ->
-            when (currentDestination) {
-                MainDestination.Connection -> ConnectionPage(state, onAction, contentPadding)
-                MainDestination.Endpoints -> EndpointsPage(state, onAction, contentPadding)
-                MainDestination.Settings -> SettingsPage(onAction, contentPadding)
+        Box(modifier = Modifier.fillMaxSize().hazeSource(hazeState)) {
+            AnimatedContent(
+                targetState = destination,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(220, delayMillis = 40)) togetherWith
+                        fadeOut(animationSpec = tween(120))
+                },
+                label = "main_destination",
+            ) { currentDestination ->
+                when (currentDestination) {
+                    MainDestination.Connection -> ConnectionPage(state, onAction, contentPadding)
+                    MainDestination.Endpoints -> EndpointsPage(state, onAction, contentPadding)
+                    MainDestination.Settings -> SettingsPage(onAction, contentPadding)
+                }
             }
         }
     }
@@ -197,38 +257,44 @@ fun MainScreen(
 }
 
 @Composable
-private fun RowScope.FloatingToolbarItem(
+private fun RowScope.DockItem(
     item: MainDestination,
     selected: Boolean,
+    interactionSource: MutableInteractionSource,
     onClick: () -> Unit,
 ) {
-    val selectedColor = MaterialTheme.colorScheme.secondaryContainer
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.92f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "dock_item_scale",
+    )
     Column(
         modifier = Modifier
             .weight(1f)
             .heightIn(min = 52.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
+            .clip(RoundedCornerShape(percent = 50))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
+            .scale(scale)
             .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Surface(
-            shape = CircleShape,
-            color = if (selected) selectedColor else Color.Transparent,
-        ) {
-            Icon(
-                painter = painterResource(item.iconRes),
-                contentDescription = stringResource(item.labelRes),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Icon(
+            painter = painterResource(item.iconRes),
+            contentDescription = stringResource(item.labelRes),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            tint = if (selected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Text(
             text = stringResource(item.labelRes),
             style = MaterialTheme.typography.labelMedium,
-            color = if (selected) MaterialTheme.colorScheme.onSurface
+            color = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
         )
@@ -265,16 +331,16 @@ private fun ConnectionPage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                FloatingActionButton(
-                    onClick = { onAction(MainAction.ToggleConnection) },
-                    modifier = Modifier.size(128.dp),
-                    shape = CircleShape,
-                    containerColor = if (state.running) {
-                        Color(0xFF1B7A4E)
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    },
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                Box(
+                    modifier = Modifier
+                        .size(128.dp)
+                        .glassSurface(
+                            shape = CircleShape,
+                            tint = if (state.running) Color(0xFF1B7A4E).copy(alpha = 0.85f)
+                            else rememberGlassCream(),
+                        )
+                        .clickable { onAction(MainAction.ToggleConnection) },
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         painter = painterResource(
@@ -287,6 +353,7 @@ private fun ConnectionPage(
                             stringResource(R.string.connect)
                         },
                         modifier = Modifier.size(48.dp),
+                        tint = if (state.running) Color.White else MaterialTheme.colorScheme.primary,
                     )
                 }
                 Spacer(Modifier.height(16.dp))
@@ -416,17 +483,11 @@ private fun ActionCard(
     highlighted: Boolean,
     onClick: () -> Unit,
 ) {
-    Card(
+    GlassCard(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = if (highlighted) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
-            },
-        ),
+        tint = if (highlighted) rememberGlassAccent() else rememberGlassCream(),
     ) {
         Row(
             modifier = Modifier
@@ -459,11 +520,7 @@ private fun RoutingCard(
     mode: TunnelState.Mode,
     onModeSelected: (TunnelState.Mode) -> Unit,
 ) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-    ) {
+    GlassCard(modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -491,21 +548,25 @@ private fun RoutingCard(
 
 @Composable
 private fun ModeChip(labelRes: Int, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = 40.dp),
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(horizontal = 2.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-            else MaterialTheme.colorScheme.surface,
-            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-            else MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+    Box(
+        modifier = modifier
+            .heightIn(min = 40.dp)
+            .glassSurface(
+                shape = MaterialTheme.shapes.medium,
+                tint = if (selected) rememberGlassAccent() else rememberGlassCream(),
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(labelRes),
             style = MaterialTheme.typography.labelMedium,
+            color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+            else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             softWrap = false,
         )
@@ -515,14 +576,11 @@ private fun ModeChip(labelRes: Int, selected: Boolean, modifier: Modifier, onCli
 @Composable
 private fun ProfileCard(profile: Profile, onAction: (MainAction) -> Unit) {
     var menuExpanded by remember { mutableStateOf(false) }
-    ElevatedCard(
+    GlassCard(
         onClick = { onAction(MainAction.ActivateProfile(profile)) },
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = if (profile.active) MaterialTheme.colorScheme.secondaryContainer
-            else MaterialTheme.colorScheme.surfaceVariant,
-        ),
+        tint = if (profile.active) rememberGlassAccent() else rememberGlassCream(),
     ) {
         Row(
             modifier = Modifier
@@ -583,11 +641,7 @@ private data class SettingItem(val titleRes: Int, val iconRes: Int, val action: 
 
 @Composable
 private fun SettingsGroup(items: List<SettingItem>, onAction: (MainAction) -> Unit) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-    ) {
+    GlassCard(modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
         Column {
             items.forEach { item ->
                 Row(
