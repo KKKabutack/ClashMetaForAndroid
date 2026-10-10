@@ -1,10 +1,20 @@
 package com.github.kr328.clash
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.res.Configuration
+import android.graphics.Outline
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewOutlineProvider
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.activity.BackEventCompat
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
@@ -72,6 +82,9 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
 
     fun defer(operation: suspend () -> Unit) {
         this.defer = operation
+        // defer 承载退出前的保存逻辑，不能被系统直接 finish 绕过——
+        // 自动启用返回拦截，让系统把返回手势交给本 Activity 处理。
+        setBackInterceptionEnabled(true)
     }
 
     suspend fun <I, O> startActivityForResult(
@@ -125,14 +138,9 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
             task.setExcludeFromRecents(uiStore.hideFromRecents)
         }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : androidx.activity.OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    onBackInvoked()
-                }
-            }
-        )
+        // Predictive back：回调默认 disabled，让系统播放跨 Activity / 回桌面的预见性动画；
+        // 只有需要拦截返回的页面（注册了 defer 或显式调用 setBackInterceptionEnabled）才启用。
+        onBackPressedDispatcher.addCallback(this, predictiveBackCallback)
 
         launch {
             main()
@@ -163,12 +171,20 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         if (deferRunning) return
         deferRunning = true
 
+        val committed = backCommitRequested
+        backCommitRequested = false
+
         launch {
             try {
                 defer()
             } finally {
                 withContext(NonCancellable) {
-                    super.finish()
+                    if (committed) {
+                        // 返回手势提交的退出：先播内容缩小淡出，动画结束后才真正关闭窗口
+                        playBackExitAnimation { super.finish() }
+                    } else {
+                        super.finish()
+                    }
                 }
             }
         }
@@ -183,6 +199,129 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
             }
         }
     }
+
+    // region predictive back
+
+    private val backContentView: View?
+        get() = findViewById(android.R.id.content)
+
+    private var backCommitRequested = false
+    private var backOutlineRadius = 0f
+
+    private val backOutlineProvider = object : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+            outline.setRoundRect(0, 0, view.width, view.height, backOutlineRadius)
+        }
+    }
+
+    private val predictiveBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            backCommitRequested = false
+            beginBackGesture()
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) {
+            if (backContentView?.clipToOutline != true) {
+                beginBackGesture()
+            }
+
+            val density = resources.displayMetrics.density
+            val progress = backEvent.progress
+            val direction = if (backEvent.swipeEdge == BackEventCompat.EDGE_LEFT) 1f else -1f
+
+            backContentView?.apply {
+                scaleX = 1f - 0.10f * progress
+                scaleY = scaleX
+                translationX = direction * 24f * density * progress
+                backOutlineRadius = 28f * density * progress
+                invalidateOutline()
+            }
+        }
+
+        override fun handleOnBackCancelled() {
+            revertBackAnimation()
+        }
+
+        override fun handleOnBackPressed() {
+            backCommitRequested = true
+            onBackInvoked()
+        }
+    }
+
+    /**
+     * 启用/关闭返回拦截。启用后返回手势由本 Activity 消费（系统不再播放跨 Activity 预见性动画），
+     * 手势进度驱动 [backContentView] 的缩放动画；提交时走 [onBackInvoked]。
+     *
+     * 提交后若不 [finish]（如弹确认框、目录栈 pop），必须调用 [revertBackAnimation] 复位内容。
+     */
+    protected fun setBackInterceptionEnabled(enabled: Boolean) {
+        predictiveBackCallback.isEnabled = enabled
+    }
+
+    /** 内容回弹复位（手势取消，或提交后不退出的场景）。 */
+    protected fun revertBackAnimation() {
+        backCommitRequested = false
+
+        val content = backContentView ?: return
+        content.animate().cancel()
+        content.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .translationX(0f)
+            .alpha(1f)
+            .setDuration(200)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                content.clipToOutline = false
+                content.outlineProvider = ViewOutlineProvider.BACKGROUND
+            }
+            .start()
+    }
+
+    private fun beginBackGesture() {
+        backContentView?.apply {
+            animate().cancel()
+            pivotX = width / 2f
+            pivotY = height / 2f
+            backOutlineRadius = 0f
+            outlineProvider = backOutlineProvider
+            clipToOutline = true
+            invalidateOutline()
+        }
+    }
+
+    private fun playBackExitAnimation(onEnd: () -> Unit) {
+        val content = backContentView
+        if (content == null) {
+            onEnd()
+            return
+        }
+
+        // 屏蔽默认窗口关闭转场，由内容动画收尾
+        overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
+
+        content.animate().cancel()
+
+        val startScale = content.scaleX
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 180
+            interpolator = AccelerateInterpolator()
+            addUpdateListener { animator ->
+                val t = animator.animatedValue as Float
+                content.scaleX = startScale + (startScale * 0.80f - startScale) * t
+                content.scaleY = content.scaleX
+                content.alpha = 1f - t
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animator: Animator) {
+                    onEnd()
+                }
+            })
+            start()
+        }
+    }
+
+    // endregion
 
     open fun shouldDisplayHomeAsUpEnabled(): Boolean {
         return true

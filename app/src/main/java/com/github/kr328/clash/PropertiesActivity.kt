@@ -72,9 +72,16 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
     override fun onBackInvoked() {
         design?.apply {
             launch {
-                if (!progressing) {
-                    if (original == profile || requestExitWithoutSaving())
-                        finish()
+                when {
+                    progressing -> revertBackAnimation()
+                    original == profile -> finish()
+                    else -> {
+                        // 弹确认框而不是退出，先把返回手势缩小的内容回弹复位
+                        revertBackAnimation()
+
+                        if (requestExitWithoutSaving())
+                            finish()
+                    }
                 }
             }
         } ?: super.onBackInvoked()

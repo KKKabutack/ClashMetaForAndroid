@@ -29,6 +29,7 @@
         android:name=".MainApplication"
         android:allowBackup="true"
         android:banner="@mipmap/ic_banner"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/full_backup_content"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/application_name"
