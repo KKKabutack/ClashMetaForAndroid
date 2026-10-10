@@ -111,6 +111,7 @@ class ProxyActivity : BaseActivity<Design<*>>() {
             it.copy(
                 groups = groups,
                 selectedGroup = preferredGroup?.takeIf(groups::containsKey) ?: groups.keys.firstOrNull(),
+                loading = false,
             )
         }
     }
