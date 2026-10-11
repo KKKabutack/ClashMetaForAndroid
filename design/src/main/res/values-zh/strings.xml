@@ -74,6 +74,8 @@
     <string name="routing_rules_summary">选择流量如何分流</string>
     <string name="endpoint_region">节点 / 地区</string>
     <string name="endpoint_region_summary">选择代理组与节点</string>
+    <string name="proxy_rules">节点与规则</string>
+    <string name="proxy_rules_summary">节点、地区与路由规则</string>
     <string name="endpoint_config_title">节点配置</string>
     <string name="endpoint_config_subtitle">配置文件、订阅与 Provider</string>
     <string name="select_mode">选择模式</string>
@@ -288,6 +290,37 @@
     <string name="external_control_stopped">Clash.Meta 服务已停止</string>
     <string name="import_from_qr_no_permission">相机权限受限，请前往设置开启。</string>
     <string name="import_from_qr_exception">发生系统未知异常，操作失败。</string>
+
+    <string name="proxy_segment_nodes">节点</string>
+    <string name="proxy_segment_rules">规则</string>
+    <string name="rule_class_new">新建规则类</string>
+    <string name="rule_class_empty">暂无规则类</string>
+    <string name="rule_class_duplicate">规则类已存在</string>
+    <string name="rule_count_format">%d 条规则</string>
+    <string name="rule_tag_new">新建标签</string>
+    <string name="rule_tag_empty">暂无标签</string>
+    <string name="rule_empty">暂无规则</string>
+    <string name="rule_tag_duplicate">标签已存在</string>
+    <string name="rule_tag_direct">直连</string>
+    <string name="rule_tag_proxy">代理</string>
+    <string name="rule_tag_reject">拦截</string>
+    <string name="rule_group_using">这一组使用</string>
+    <string name="rule_group_auto">自动</string>
+    <string name="rule_egress">出口</string>
+    <string name="rule_pick_egress">选择出口</string>
+    <string name="rule_source_subscription">来自订阅</string>
+    <string name="rule_add">新增规则</string>
+    <string name="rule_edit">编辑规则</string>
+    <string name="rule_type">规则类型</string>
+    <string name="rule_value">匹配值</string>
+    <string name="rule_set_library">规则配置库</string>
+    <string name="rule_set_new">新建配置</string>
+    <string name="rule_set_default_name">我的规则</string>
+    <string name="rule_set_copy_format">%s 副本</string>
+    <string name="rule_set_activate">激活</string>
+    <string name="rule_set_active">使用中</string>
+    <string name="rule_set_groups_format">%d 个规则类</string>
+    <string name="rule_set_updated_format">更新于 %s</string>
 
     <string name="shortcut_toggle_short">切换 Clash</string>
     <string name="shortcut_toggle_long">切换 Clash 服务启停</string>

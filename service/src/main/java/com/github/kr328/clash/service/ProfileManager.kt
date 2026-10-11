@@ -1,10 +1,14 @@
 package com.github.kr328.clash.service
 
 import android.content.Context
+import com.github.kr328.clash.core.model.RuleClassPreviewList
+import com.github.kr328.clash.core.model.RuleSetConfig
+import com.github.kr328.clash.core.model.RuleSetConfigList
 import com.github.kr328.clash.service.data.Database
 import com.github.kr328.clash.service.data.ImportedDao
 import com.github.kr328.clash.service.data.Pending
 import com.github.kr328.clash.service.data.PendingDao
+import com.github.kr328.clash.service.data.RuleSetDao
 import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.service.remote.IFetchObserver
 import com.github.kr328.clash.service.remote.IProfileManager
@@ -173,6 +177,38 @@ class ProfileManager(private val context: Context) : IProfileManager,
 
     override suspend fun setActive(profile: Profile) {
         ProfileProcessor.active(context, profile.uuid)
+    }
+
+    override suspend fun queryRuleSets(): RuleSetConfigList {
+        return RuleSetConfigList(
+            RuleSetDao().queryAll().mapNotNull { RuleConfigManager.decodeRuleSetConfig(it) }
+        )
+    }
+
+    override suspend fun queryActiveRuleSet(): RuleSetConfig? {
+        val uuid = store.activeRuleSet ?: return null
+
+        return RuleSetDao().queryByUUID(uuid)?.let { RuleConfigManager.decodeRuleSetConfig(it) }
+    }
+
+    override suspend fun saveRuleSet(config: RuleSetConfig) {
+        RuleConfigManager.saveRuleSet(context, config)
+    }
+
+    override suspend fun deleteRuleSet(uuid: UUID) {
+        RuleConfigManager.deleteRuleSet(context, uuid)
+    }
+
+    override suspend fun setActiveRuleSet(uuid: UUID) {
+        RuleConfigManager.setActiveRuleSet(context, uuid)
+    }
+
+    override suspend fun clearActiveRuleSet() {
+        RuleConfigManager.setActiveRuleSet(context, null)
+    }
+
+    override suspend fun queryRulePreview(): RuleClassPreviewList {
+        return RuleClassPreviewList(RuleConfigManager.queryRulePreview(context))
     }
 
     private suspend fun resolveProfile(uuid: UUID): Profile? {

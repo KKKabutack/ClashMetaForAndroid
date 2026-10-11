@@ -327,6 +327,37 @@
     <string name="force_dns_mapping">Force DNS Mapping</string>
     <string name="parse_pure_ip">Parse Pure IP</string>
     <string name="override_destination">Override Destination</string>
+    <string name="proxy_segment_nodes">Узлы</string>
+    <string name="proxy_segment_rules">Правила</string>
+    <string name="rule_class_new">Новый класс правил</string>
+    <string name="rule_class_empty">Нет классов правил</string>
+    <string name="rule_class_duplicate">Класс правил уже существует</string>
+    <string name="rule_count_format">Правил: %d</string>
+    <string name="rule_tag_new">Новый тег</string>
+    <string name="rule_tag_empty">Нет тегов</string>
+    <string name="rule_empty">Нет правил</string>
+    <string name="rule_tag_duplicate">Тег уже существует</string>
+    <string name="rule_tag_direct">Напрямую</string>
+    <string name="rule_tag_proxy">Прокси</string>
+    <string name="rule_tag_reject">Блокировка</string>
+    <string name="rule_group_using">Эта группа использует</string>
+    <string name="rule_group_auto">Авто</string>
+    <string name="rule_egress">Выход</string>
+    <string name="rule_pick_egress">Выбрать выход</string>
+    <string name="rule_source_subscription">Из подписки</string>
+    <string name="rule_add">Добавить правило</string>
+    <string name="rule_edit">Изменить правило</string>
+    <string name="rule_type">Тип правила</string>
+    <string name="rule_value">Значение</string>
+    <string name="rule_set_library">Библиотека конфигураций</string>
+    <string name="rule_set_new">Новая конфигурация</string>
+    <string name="rule_set_default_name">Мои правила</string>
+    <string name="rule_set_copy_format">%s (копия)</string>
+    <string name="rule_set_activate">Активировать</string>
+    <string name="rule_set_active">Активна</string>
+    <string name="rule_set_groups_format">Групп: %d</string>
+    <string name="rule_set_updated_format">Обновлено: %s</string>
+
     <string name="import_from_qr_no_permission">Доступ к камере ограничен. Разрешите его в настройках.</string>
     <string name="import_from_qr_exception">Произошла не обрабатываемая системная ошибка.</string>
 </resources>

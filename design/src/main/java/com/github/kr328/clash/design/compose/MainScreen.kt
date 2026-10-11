@@ -365,17 +365,12 @@ private fun ConnectionPage(
             }
         }
         item {
-            ActionCard(
-                title = stringResource(R.string.endpoint_region),
-                description = state.selectedNode?.takeIf { it.isNotBlank() }
-                    ?: stringResource(R.string.endpoint_region_summary),
-                iconRes = R.drawable.ic_baseline_apps,
-                highlighted = true,
-                onClick = { onAction(MainAction.OpenProxy) },
+            ProxyRulesCard(
+                selectedNode = state.selectedNode,
+                mode = state.mode,
+                onOpen = { onAction(MainAction.OpenProxy) },
+                onModeSelected = { onAction(MainAction.PatchMode(it)) },
             )
-        }
-        item {
-            RoutingCard(mode = state.mode, onModeSelected = { onAction(MainAction.PatchMode(it)) })
         }
     }
 }
@@ -515,22 +510,52 @@ private fun ActionCard(
     }
 }
 
+/**
+ * Merged entry for node selection and routing: tapping the card opens the
+ * proxy/rules screen, while the mode chips switch routing mode in place.
+ * The chips are nested clickables, so their taps never trigger the card.
+ */
 @Composable
-private fun RoutingCard(
+private fun ProxyRulesCard(
+    selectedNode: String?,
     mode: TunnelState.Mode,
+    onOpen: () -> Unit,
     onModeSelected: (TunnelState.Mode) -> Unit,
 ) {
-    GlassCard(modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large) {
+    GlassCard(
+        onClick = onOpen,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        tint = rememberGlassAccent(),
+    ) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(stringResource(R.string.routing_rules), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.routing_rules_summary),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_baseline_apps),
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+                Column {
+                    Text(
+                        stringResource(R.string.proxy_rules),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        selectedNode?.takeIf { it.isNotBlank() }
+                            ?: stringResource(R.string.proxy_rules_summary),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 ModeChip(R.string.rule_mode, mode == TunnelState.Mode.Rule, Modifier.weight(1f)) {
                     onModeSelected(TunnelState.Mode.Rule)

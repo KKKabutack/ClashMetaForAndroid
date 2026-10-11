@@ -18,6 +18,8 @@
     <string name="routing_rules_summary">Choose how traffic is routed</string>
     <string name="endpoint_region">Endpoint</string>
     <string name="endpoint_region_summary">Choose region / node group</string>
+    <string name="proxy_rules">Nodes &amp; Rules</string>
+    <string name="proxy_rules_summary">Nodes, regions &amp; routing rules</string>
     <string name="endpoint_config_title">Endpoint Config</string>
     <string name="endpoint_config_subtitle">Profiles, subscriptions &amp; providers</string>
     <string name="select_mode">Select mode</string>
@@ -380,6 +382,37 @@
     <string name="hide_from_recents_desc">Hide app from the Recent apps screen</string>
     <string name="import_from_qr_no_permission">Camera access is restricted. Please enable it in Settings.</string>
     <string name="import_from_qr_exception">An unhandled system exception occurred.</string>
+
+    <string name="proxy_segment_nodes">Nodes</string>
+    <string name="proxy_segment_rules">Rules</string>
+    <string name="rule_class_new">New Rule Class</string>
+    <string name="rule_class_empty">No rule classes</string>
+    <string name="rule_class_duplicate">Rule class already exists</string>
+    <string name="rule_count_format">%d rules</string>
+    <string name="rule_tag_new">New Tag</string>
+    <string name="rule_tag_empty">No tags</string>
+    <string name="rule_empty">No rules</string>
+    <string name="rule_tag_duplicate">Tag already exists</string>
+    <string name="rule_tag_direct">Direct</string>
+    <string name="rule_tag_proxy">Proxy</string>
+    <string name="rule_tag_reject">Reject</string>
+    <string name="rule_group_using">This group uses</string>
+    <string name="rule_group_auto">Auto</string>
+    <string name="rule_egress">Egress</string>
+    <string name="rule_pick_egress">Select egress</string>
+    <string name="rule_source_subscription">From subscription</string>
+    <string name="rule_add">Add Rule</string>
+    <string name="rule_edit">Edit Rule</string>
+    <string name="rule_type">Rule Type</string>
+    <string name="rule_value">Match Value</string>
+    <string name="rule_set_library">Rule Configurations</string>
+    <string name="rule_set_new">New Configuration</string>
+    <string name="rule_set_default_name">My Rules</string>
+    <string name="rule_set_copy_format">%s copy</string>
+    <string name="rule_set_activate">Activate</string>
+    <string name="rule_set_active">Active</string>
+    <string name="rule_set_groups_format">%d groups</string>
+    <string name="rule_set_updated_format">Updated %s</string>
 
     <string name="shortcut_toggle_short">Toggle Clash</string>
     <string name="shortcut_toggle_long">Toggle Clash service on/off</string>

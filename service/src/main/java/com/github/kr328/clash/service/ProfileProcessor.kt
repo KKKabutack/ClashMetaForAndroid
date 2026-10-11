@@ -83,6 +83,10 @@ object ProfileProcessor {
                         context.pendingDir.resolve(snapshot.uuid.toString()).deleteRecursively()
 
                         context.sendProfileChanged(snapshot.uuid)
+
+                        if (ServiceStore(context).activeProfile == snapshot.uuid) {
+                            refreshActiveRuleSet(context)
+                        }
                     }
                 }
             }
@@ -128,6 +132,10 @@ object ProfileProcessor {
                         }
 
                         context.sendProfileChanged(snapshot.uuid)
+
+                        if (ServiceStore(context).activeProfile == snapshot.uuid) {
+                            refreshActiveRuleSet(context)
+                        }
                     }
                 }
             }
@@ -197,8 +205,18 @@ object ProfileProcessor {
                     store.activeProfile = uuid
 
                     context.sendProfileChanged(uuid)
+
+                    refreshActiveRuleSet(context)
                 }
             }
+        }
+    }
+
+    private suspend fun refreshActiveRuleSet(context: Context) {
+        try {
+            RuleConfigManager.applyActive(context)
+        } catch (e: Exception) {
+            Log.w("Apply custom rule set failed: ${e.message}", e)
         }
     }
 

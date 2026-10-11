@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.kaidl.runtime)
     implementation(libs.rikkax.multiprocess)
     implementation(libs.androidx.workmanager)
+    implementation(libs.snakeyaml)
 }
 
 androidComponents {

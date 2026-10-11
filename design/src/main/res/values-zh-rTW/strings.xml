@@ -260,6 +260,37 @@
     <string name="force_dns_mapping">Force DNS Mapping</string>
     <string name="parse_pure_ip">Parse Pure IP</string>
     <string name="override_destination">Override Destination</string>
+    <string name="proxy_segment_nodes">節點</string>
+    <string name="proxy_segment_rules">規則</string>
+    <string name="rule_class_new">新增規則類別</string>
+    <string name="rule_class_empty">尚無規則類別</string>
+    <string name="rule_class_duplicate">規則類別已存在</string>
+    <string name="rule_count_format">%d 條規則</string>
+    <string name="rule_tag_new">新增標籤</string>
+    <string name="rule_tag_empty">尚無標籤</string>
+    <string name="rule_empty">尚無規則</string>
+    <string name="rule_tag_duplicate">標籤已存在</string>
+    <string name="rule_tag_direct">直連</string>
+    <string name="rule_tag_proxy">代理</string>
+    <string name="rule_tag_reject">攔截</string>
+    <string name="rule_group_using">這一組使用</string>
+    <string name="rule_group_auto">自動</string>
+    <string name="rule_egress">出口</string>
+    <string name="rule_pick_egress">選擇出口</string>
+    <string name="rule_source_subscription">來自訂閱</string>
+    <string name="rule_add">新增規則</string>
+    <string name="rule_edit">編輯規則</string>
+    <string name="rule_type">規則類型</string>
+    <string name="rule_value">比對值</string>
+    <string name="rule_set_library">規則配置庫</string>
+    <string name="rule_set_new">新增配置</string>
+    <string name="rule_set_default_name">我的規則</string>
+    <string name="rule_set_copy_format">%s 副本</string>
+    <string name="rule_set_activate">啟用</string>
+    <string name="rule_set_active">使用中</string>
+    <string name="rule_set_groups_format">%d 個規則類別</string>
+    <string name="rule_set_updated_format">更新於 %s</string>
+
     <string name="import_from_qr_no_permission">相機權限受限，請前往設定開啟。</string>
     <string name="import_from_qr_exception">發生系統未知異常，操作失敗。</string>
 </resources>

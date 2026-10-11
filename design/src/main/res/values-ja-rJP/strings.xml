@@ -263,6 +263,37 @@
     <string name="force_dns_mapping">Force DNS Mapping</string>
     <string name="parse_pure_ip">Parse Pure IP</string>
     <string name="override_destination">Override Destination</string>
+    <string name="proxy_segment_nodes">ノード</string>
+    <string name="proxy_segment_rules">ルール</string>
+    <string name="rule_class_new">新規ルールクラス</string>
+    <string name="rule_class_empty">ルールクラスがありません</string>
+    <string name="rule_class_duplicate">ルールクラスは既に存在します</string>
+    <string name="rule_count_format">ルール %d 件</string>
+    <string name="rule_tag_new">新しいタグ</string>
+    <string name="rule_tag_empty">タグがありません</string>
+    <string name="rule_empty">ルールがありません</string>
+    <string name="rule_tag_duplicate">タグは既に存在します</string>
+    <string name="rule_tag_direct">直接接続</string>
+    <string name="rule_tag_proxy">プロキシ</string>
+    <string name="rule_tag_reject">拒否</string>
+    <string name="rule_group_using">このグループのノード</string>
+    <string name="rule_group_auto">自動</string>
+    <string name="rule_egress">出口</string>
+    <string name="rule_pick_egress">出口を選択</string>
+    <string name="rule_source_subscription">サブスクリプション由来</string>
+    <string name="rule_add">ルールを追加</string>
+    <string name="rule_edit">ルールを編集</string>
+    <string name="rule_type">ルールタイプ</string>
+    <string name="rule_value">マッチ値</string>
+    <string name="rule_set_library">ルール設定ライブラリ</string>
+    <string name="rule_set_new">新規設定</string>
+    <string name="rule_set_default_name">マイルール</string>
+    <string name="rule_set_copy_format">%s のコピー</string>
+    <string name="rule_set_activate">有効化</string>
+    <string name="rule_set_active">使用中</string>
+    <string name="rule_set_groups_format">%d グループ</string>
+    <string name="rule_set_updated_format">更新: %s</string>
+
     <string name="import_from_qr_no_permission">カメラのアクセスが制限されています。設定から有効にしてください。</string>
     <string name="import_from_qr_exception">システムで予期しない例外が発生しました。</string>
 </resources>

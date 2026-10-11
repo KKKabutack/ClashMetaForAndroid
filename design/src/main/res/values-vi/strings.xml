@@ -250,6 +250,37 @@
     <string name="vpn_service_options">Tuỳ chọn VpnService</string>
     <string name="warning">Cảnh báo</string>
     <string name="import_from_qr">Nhập từ Mã QR</string>
+    <string name="proxy_segment_nodes">Nút</string>
+    <string name="proxy_segment_rules">Quy tắc</string>
+    <string name="rule_class_new">Lớp quy tắc mới</string>
+    <string name="rule_class_empty">Chưa có lớp quy tắc</string>
+    <string name="rule_class_duplicate">Lớp quy tắc đã tồn tại</string>
+    <string name="rule_count_format">%d quy tắc</string>
+    <string name="rule_tag_new">Thẻ mới</string>
+    <string name="rule_tag_empty">Chưa có thẻ</string>
+    <string name="rule_empty">Chưa có quy tắc</string>
+    <string name="rule_tag_duplicate">Thẻ đã tồn tại</string>
+    <string name="rule_tag_direct">Trực tiếp</string>
+    <string name="rule_tag_proxy">Proxy</string>
+    <string name="rule_tag_reject">Chặn</string>
+    <string name="rule_group_using">Nhóm này dùng</string>
+    <string name="rule_group_auto">Tự động</string>
+    <string name="rule_egress">Cổng ra</string>
+    <string name="rule_pick_egress">Chọn cổng ra</string>
+    <string name="rule_source_subscription">Từ gói thuê bao</string>
+    <string name="rule_add">Thêm quy tắc</string>
+    <string name="rule_edit">Sửa quy tắc</string>
+    <string name="rule_type">Loại quy tắc</string>
+    <string name="rule_value">Giá trị khớp</string>
+    <string name="rule_set_library">Thư viện cấu hình</string>
+    <string name="rule_set_new">Cấu hình mới</string>
+    <string name="rule_set_default_name">Quy tắc của tôi</string>
+    <string name="rule_set_copy_format">Bản sao %s</string>
+    <string name="rule_set_activate">Kích hoạt</string>
+    <string name="rule_set_active">Đang dùng</string>
+    <string name="rule_set_groups_format">%d nhóm</string>
+    <string name="rule_set_updated_format">Cập nhật: %s</string>
+
     <string name="import_from_qr_no_permission">Quyền truy cập camera bị hạn chế. Vui lòng bật trong Cài đặt.</string>
     <string name="import_from_qr_exception">Đã xảy ra ngoại lệ hệ thống không xử lý được.</string>
 </resources>

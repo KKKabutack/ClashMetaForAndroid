@@ -1,5 +1,8 @@
 package com.github.kr328.clash.service.remote
 
+import com.github.kr328.clash.core.model.RuleClassPreviewList
+import com.github.kr328.clash.core.model.RuleSetConfig
+import com.github.kr328.clash.core.model.RuleSetConfigList
 import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.kaidl.BinderInterface
 import java.util.*
@@ -17,4 +20,12 @@ interface IProfileManager {
     suspend fun queryAll(): List<Profile>
     suspend fun queryActive(): Profile?
     suspend fun setActive(profile: Profile)
+
+    suspend fun queryRuleSets(): RuleSetConfigList
+    suspend fun queryActiveRuleSet(): RuleSetConfig?
+    suspend fun saveRuleSet(config: RuleSetConfig)
+    suspend fun deleteRuleSet(uuid: UUID)
+    suspend fun setActiveRuleSet(uuid: UUID)
+    suspend fun clearActiveRuleSet()
+    suspend fun queryRulePreview(): RuleClassPreviewList
 }

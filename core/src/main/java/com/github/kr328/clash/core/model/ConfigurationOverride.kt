@@ -2,9 +2,11 @@ package com.github.kr328.clash.core.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.github.kr328.clash.core.util.JsonObjectListCompatSerializer
 import com.github.kr328.clash.core.util.Parcelizer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class ConfigurationOverride(
@@ -55,6 +57,15 @@ data class ConfigurationOverride(
 
     @SerialName("hosts")
     var hosts: Map<String, String>? = null,
+
+    // mihomo decodes this override with encoding/json, whose tag is `rule`
+    // (`yaml:"rules" json:"rule"`). The key `rules` is ignored and custom rules never apply.
+    @SerialName("rule")
+    var rules: List<String>? = null,
+
+    @Serializable(with = JsonObjectListCompatSerializer::class)
+    @SerialName("proxy-groups")
+    var proxyGroups: List<JsonObject>? = null,
 
     @SerialName("unified-delay")
     var unifiedDelay: Boolean? = null,

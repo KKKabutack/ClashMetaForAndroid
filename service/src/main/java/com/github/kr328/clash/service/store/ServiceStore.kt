@@ -20,6 +20,12 @@ class ServiceStore(context: Context) {
         to = { it?.toString() ?: "" }
     )
 
+    var activeRuleSet: UUID? by store.typedString(
+        key = "active_rule_set",
+        from = { if (it.isBlank()) null else UUID.fromString(it) },
+        to = { it?.toString() ?: "" }
+    )
+
     var bypassPrivateNetwork: Boolean by store.boolean(
         key = "bypass_private_network",
         defaultValue = true
